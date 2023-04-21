@@ -23,6 +23,8 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        
+        // Botón entrar con usuario anónimo: UsuarioRepositorio.iniciar("Anónimo", "")
     }
 }
 

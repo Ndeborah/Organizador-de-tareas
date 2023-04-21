@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">Organizador</string>
+    <string name="ingresar">Ingresar</string>
+    <string name="crear_usuario">CREAR USUARIO</string>
+    <string name="usuario">Usuario:</string>
+    <string name="password">Contraseña:</string>
+    <string name="confirmar">Confirmar contraseña:</string>
+    <string name="nombre">Nombre:</string>
+    <string name="apellido">Apellido:</string>
+    <string name="ingresoFail">Por favor, ingresa los datos solicitados</string>
+    <string name="datosIncorrectos">Datos incorrectos</string>
+    <string name="nicknameExistente">El nickname ya existe, cámbialo</string>
+    <string name="passDiferentes">Las contraseñas no coinciden</string>
+    <string name="passIncorrecta">La contraseña debe tener al menos una mayúscula, una minúscula, un número y un caracter especial</string>
+    <string name="usuarioCreado">Usuario creado correctamente</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="passRechazada">Contraseña rechazada</string>
+    <string name="inicio">Inicio</string>
+    <string name="comprar">Comprar</string>
+    <string name="perfil">Perfil</string>
+    <string name="cerrar">CERRAR SESIÓN</string>
 </resources>

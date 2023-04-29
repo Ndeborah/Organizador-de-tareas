@@ -4,6 +4,10 @@ import com.example.organizadordetareas.entidades.Usuario
 
 object UsuarioRepositorio {
     val usuarios = mutableListOf<Usuario>()
+    
+    init {
+        agregar(Usuario("Anónimo", "")
+    }
 
     fun agregar(usuario: Usuario) {
         if (existe(usuario.nickname, usuario.password)) println("Error al agregar la cuenta.")

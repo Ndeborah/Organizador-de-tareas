@@ -2,10 +2,7 @@ package com.example.organizadordetareas.entidades
 
 class Usuario (
     var nickname: String= "",
-    var password:String = "",
-    var codigoCuenta: Int = 0,
-    var nombre: String = "",
-    var apellido: String = ""
+    var password: String = "",
 ) {
     fun comprobarContraseniaAlCrear(contrasenia: String): Boolean {
         var contieneMayuscula = false

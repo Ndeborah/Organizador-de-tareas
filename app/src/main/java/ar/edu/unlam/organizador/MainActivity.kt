@@ -50,6 +50,7 @@ class MainActivity : ComponentActivity() {
 
     }
 
+    // ESTE ES UN EJEMPLO DE COMO USAR EL PREVIEW PARA MODIFICAR Y VER EN EL MOMENTO EL CAMBIO.
     @Preview(showBackground = true)
     @Composable
     fun GreetingPreview() {

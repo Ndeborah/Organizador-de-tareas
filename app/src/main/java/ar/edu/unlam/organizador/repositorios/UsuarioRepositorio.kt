@@ -1,12 +1,12 @@
-package com.example.organizadordetareas.repositorios
+package ar.edu.unlam.organizador.repositorios
 
-import com.example.organizadordetareas.entidades.Usuario
+import ar.edu.unlam.organizador.entidades.Usuario
 
 object UsuarioRepositorio {
     val usuarios = mutableListOf<Usuario>()
-    
+
     init {
-        agregar(Usuario("Anónimo", "")
+        agregar(Usuario("Anónimo", ""))
     }
 
     fun agregar(usuario: Usuario) {
@@ -15,7 +15,9 @@ object UsuarioRepositorio {
     }
 
     fun existe(nickname: String, password: String): Boolean {
-        return (usuarios.any { usuario: Usuario -> usuario.nickname == nickname && usuario.password == password });
+        return (usuarios.any { usuario: Usuario ->
+            usuario.nickname == nickname && usuario.password == password
+        })
     }
 
     fun iniciar(nickname: String, password: String): Usuario {

@@ -1,9 +1,8 @@
-package com.example.organizadordetareas.entidades
+package ar.edu.unlam.organizador.entidades
 
 import java.time.LocalDate
-import java.time.LocalTime
 
-data class Tarea (
+data class Tarea(
     val nombre: String,
     val fechaInicio: LocalDate,
     val fechaFin: LocalDate,

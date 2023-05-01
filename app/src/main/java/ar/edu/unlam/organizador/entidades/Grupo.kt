@@ -1,4 +1,4 @@
-package com.example.organizadordetareas.entidades
+package ar.edu.unlam.organizador.entidades
 
 data class Grupo (
   val nombre: String,

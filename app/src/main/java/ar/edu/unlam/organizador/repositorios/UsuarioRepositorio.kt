@@ -17,7 +17,7 @@ object UsuarioRepositorio {
     fun existe(nickname: String, password: String): Boolean {
         return (usuarios.any { usuario: Usuario ->
             usuario.nickname == nickname && usuario.password == password
-        })
+         })
     }
 
     fun iniciar(nickname: String, password: String): Usuario {

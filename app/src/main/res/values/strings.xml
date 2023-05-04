@@ -20,4 +20,6 @@
     <string name="comprar">Comprar</string>
     <string name="perfil">Perfil</string>
     <string name="cerrar">CERRAR SESIÓN</string>
+    <string name="title_activity_main2">MainActivity2</string>
+    <string name="title_activity_chat">ChatActivity</string>
 </resources>

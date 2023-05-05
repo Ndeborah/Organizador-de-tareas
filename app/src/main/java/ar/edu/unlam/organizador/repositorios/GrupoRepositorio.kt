@@ -9,8 +9,6 @@ object GrupoRepositorio {
         agregar(Grupo("Grupo 1", 0, ""))
         agregar(Grupo("Grupo 2", 0, ""))
         agregar(Grupo("Grupo 3", 0, ""))
-        agregar(Grupo("Grupo 4", 0, ""))
-        agregar(Grupo("Grupo 5", 0, ""))
     }
 
     fun agregar(grupo: Grupo) {

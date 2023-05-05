@@ -22,4 +22,5 @@
     <string name="cerrar">CERRAR SESIÓN</string>
     <string name="title_activity_main2">MainActivity2</string>
     <string name="title_activity_chat">ChatActivity</string>
+    <string name="title_activity_crear_grupo">CrearGrupoActivity</string>
 </resources>

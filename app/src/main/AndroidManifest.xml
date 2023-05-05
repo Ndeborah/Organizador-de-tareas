@@ -13,6 +13,11 @@
         android:theme="@style/Theme.Organizador"
         tools:targetApi="31">
         <activity
+            android:name=".CrearGrupoActivity"
+            android:exported="false"
+            android:label="@string/title_activity_crear_grupo"
+            android:theme="@style/Theme.Organizador" />
+        <activity
             android:name=".ChatActivity"
             android:exported="false"
             android:label="@string/title_activity_chat"

@@ -20,4 +20,14 @@ object GrupoRepositorio {
     fun existe(nombre: String): Boolean {
         return grupos.any { grupo: Grupo -> grupo.nombre == nombre }
     }
+
+    fun ingresar(nombre: String): Grupo {
+        var grupoIngresado = Grupo()
+        for (elemento in grupos) {
+            if (elemento.nombre == nombre) {
+                grupoIngresado = elemento
+            }
+        }
+        return grupoIngresado
+    }
 }

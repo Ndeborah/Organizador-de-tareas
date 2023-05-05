@@ -1,7 +1,7 @@
 package ar.edu.unlam.organizador.entidades
 
 data class Grupo (
-  val nombre: String,
-  val cantidadDeParticipantes: Int,
-  val contrasenia: String
+  var nombre: String = "",
+  var cantidadDeParticipantes: Int = 0,
+  var contrasenia: String = ""
 )

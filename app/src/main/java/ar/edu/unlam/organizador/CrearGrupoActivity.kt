@@ -37,7 +37,8 @@ import ar.edu.unlam.organizador.ui.theme.Purple40
 
 class CrearGrupoActivity : ComponentActivity() {
     private lateinit var nuevoGrupo: Grupo
-    private lateinit var nombre: String
+
+    var nombre: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -115,14 +116,15 @@ class CrearGrupoActivity : ComponentActivity() {
                 .background(Color.White)
                 .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
-            Column() {
-                nombre = IngresarNombre().toString()
-                nuevoGrupo = Grupo(nombre, 0, "")
+            Column {
+                IngresarNombre().toString()
             }
         }
         Spacer(modifier = Modifier.size(100.dp))
         Button(onClick = {
+            nuevoGrupo = Grupo(nombre, 0, "")
             GrupoRepositorio.agregar(nuevoGrupo)
+            irAGrupos()
             finish()
         }) {
             Text(text = "Crear")
@@ -135,15 +137,21 @@ class CrearGrupoActivity : ComponentActivity() {
         var text by remember { mutableStateOf(TextFieldValue(""))}
         OutlinedTextField (
             value = text,
-            onValueChange = {text = it},
+            onValueChange = { text = it } ,
             label = { Text(text = "Ingresar el nombre del nuevo Grupo")},
             singleLine = true,
             modifier = Modifier.padding(top = 20.dp)
         )
+        nombre = text.text
     }
 
     private fun irAChat() {
         val intent = Intent(this, ChatActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun irAGrupos() {
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 

@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -105,7 +106,7 @@ class MainActivity : ComponentActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White)
-                .padding(horizontal = 10.dp, vertical = 10.dp)
+                .padding(horizontal = 10.dp, vertical = 10.dp).clickable(enabled = true, onClick = {ingresarAGrupo(item.nombre)})
         ) {
             Column() {
                 Text(text = item.nombre)
@@ -145,6 +146,13 @@ class MainActivity : ComponentActivity() {
 
     private fun irATareas() {
         val intent = Intent(this, TareasActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun ingresarAGrupo(nombre: String) {
+        val intent = Intent(this, GrupoActivity::class.java).apply {
+            putExtra("nombre", nombre)
+        }
         startActivity(intent)
     }
 }

@@ -3,9 +3,9 @@ package ar.edu.unlam.organizador.entidades
 import java.time.LocalDate
 
 data class Tarea(
-    val nombre: String,
-    val fechaInicio: LocalDate,
-    val fechaFin: LocalDate,
-    val descripcion: String,
-    val grupo: Grupo
+    var nombre: String,
+    var fechaInicio: LocalDate,
+    var fechaFin: LocalDate,
+    var descripcion: String,
+    var grupo: Grupo
 )

@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -37,27 +39,29 @@ class GrupoActivity : ComponentActivity() {
 
         setContent {
             OrganizadorTheme {
-                Base(grupo)
+                Base(grupo, nombre)
             }
         }
     }
 
     @Composable
-    private fun Base(grupo: Grupo) {
+    private fun Base(grupo: Grupo, nombre: String) {
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = Color.Black
         ) {
             Column {
-                Menu()
+                Menu(nombre)
                 NombreDeGrupo(grupo)
+                Participantes()
+                Salir()
             }
         }
     }
 
     @Composable
-    private fun Menu() {
+    private fun Menu(nombre: String) {
         Row (
             modifier = Modifier
                 .fillMaxWidth()
@@ -67,7 +71,7 @@ class GrupoActivity : ComponentActivity() {
         ) {
             Button(
                 onClick = {
-                    irAChat()
+                    irAChat(nombre)
                     onStop()
                 }
             ) {
@@ -80,7 +84,7 @@ class GrupoActivity : ComponentActivity() {
             }
             Button(
                 onClick = {
-                    irATareas()
+                    irATareas(nombre)
                     onStop()
                 }
             ) {
@@ -103,13 +107,50 @@ class GrupoActivity : ComponentActivity() {
         }
     }
 
-    private fun irAChat() {
-        val intent = Intent(this, ChatActivity::class.java)
+    @Composable
+    private fun Participantes() {
+        Spacer(modifier = Modifier.size(5.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .padding(horizontal = 10.dp, vertical = 10.dp)
+        ) {
+            Column() {
+                Text(text = "Participantes")
+            }
+        }
+        Spacer(modifier = Modifier.size(5.dp))
+    }
+
+    @Composable
+    private fun Salir() {
+        Column() {
+            Button(onClick = {
+                irAMain()
+                finish()
+            }) {
+                Text(text = "Salir")
+            }
+        }
+    }
+
+    private fun irAChat(nombre: String) {
+        val intent = Intent(this, ChatActivity::class.java).apply {
+            putExtra("nombre", nombre)
+        }
         startActivity(intent)
     }
 
-    private fun irATareas() {
-        val intent = Intent(this, TareasActivity::class.java)
+    private fun irATareas(nombre: String) {
+        val intent = Intent(this, TareasActivity::class.java).apply {
+            putExtra("nombre", nombre)
+        }
+        startActivity(intent)
+    }
+
+    private fun irAMain() {
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 }

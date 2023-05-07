@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,9 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.organizador.entidades.Grupo
 import ar.edu.unlam.organizador.repositorios.GrupoRepositorio
+import ar.edu.unlam.organizador.repositorios.TareaRepositorio
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
-import ar.edu.unlam.organizador.ui.theme.Pink80
-import ar.edu.unlam.organizador.ui.theme.Purple40
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,42 +46,9 @@ class MainActivity : ComponentActivity() {
             color = Color.Black
         ) {
             Column {
-                Menu()
+                //Menu()
                 MostrarGrupos(GrupoRepositorio.grupos)
                 Botones()
-            }
-        }
-    }
-
-    @Composable
-    private fun Menu() {
-        Row (
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Purple40),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(
-                onClick = {
-                    irAChat()
-                    onStop()
-                }
-            ) {
-                Text(text = "Chat")
-            }
-            Button(
-                onClick = {}
-            ) {
-                Text(text = "Grupos", color = Pink80)
-            }
-            Button(
-                onClick = {
-                    irATareas()
-                    onStop()
-                }
-            ) {
-                Text(text = "Tareas")
             }
         }
     }
@@ -108,9 +73,9 @@ class MainActivity : ComponentActivity() {
                 .background(Color.White)
                 .padding(horizontal = 10.dp, vertical = 10.dp).clickable(enabled = true, onClick = {ingresarAGrupo(item.nombre)})
         ) {
-            Column() {
+            Column {
                 Text(text = item.nombre)
-                Text(text = "Pendientes: ")
+                Text(text = "Pendientes: ${TareaRepositorio.obtenerListaDeTareasPendientesPorGrupo(item.nombre).size}")
             }
         }
     }
@@ -136,16 +101,6 @@ class MainActivity : ComponentActivity() {
 
     private fun irACrearGrupo() {
         val intent = Intent(this, CrearGrupoActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun irAChat() {
-        val intent = Intent(this, ChatActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun irATareas() {
-        val intent = Intent(this, TareasActivity::class.java)
         startActivity(intent)
     }
 

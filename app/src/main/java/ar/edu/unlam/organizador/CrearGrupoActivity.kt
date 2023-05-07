@@ -57,45 +57,11 @@ class CrearGrupoActivity : ComponentActivity() {
             color = Color.Black
         ) {
             Column {
-                Menu()
+                //Menu()
                 CrearGrupo()
             }
         }
     }
-
-    @Composable
-    private fun Menu() {
-        Row (
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Purple40),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(
-                onClick = {
-                    irAChat()
-                    onStop()
-                }
-            ) {
-                Text(text = "Chat")
-            }
-            Button(
-                onClick = {}
-            ) {
-                Text(text = "Grupos", color = Pink80)
-            }
-            Button(
-                onClick = {
-                    irATareas()
-                    onStop()
-                }
-            ) {
-                Text(text = "Tareas")
-            }
-        }
-    }
-
 
     @Composable
     private fun CrearGrupo() {
@@ -121,13 +87,18 @@ class CrearGrupoActivity : ComponentActivity() {
             }
         }
         Spacer(modifier = Modifier.size(100.dp))
-        Button(onClick = {
-            nuevoGrupo = Grupo(nombre, 0, "")
-            GrupoRepositorio.agregar(nuevoGrupo)
-            irAGrupos()
-            finish()
-        }) {
-            Text(text = "Crear")
+        Column() {
+            Button(onClick = {
+                nuevoGrupo = Grupo(nombre, 0, "")
+                GrupoRepositorio.agregar(nuevoGrupo)
+                irAGrupos()
+                finish()
+            }) {
+                Text(text = "Crear")
+            }
+            Button(onClick = { finish() }) {
+                Text(text = "Cancelar")
+            }
         }
     }
 

@@ -17,7 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -60,6 +64,7 @@ class TareasActivity : ComponentActivity() {
                 NombreDeGrupo(grupo)
                 TareasPendientes(datos = TareaRepositorio.obtenerListaDeTareasPendientesPorGrupo(nombre))
                 TareasRealizadas(datos = TareaRepositorio.obtenerListaDeTareasRealizadasPorGrupo(nombre))
+                BotonAgregar(grupo = grupo)
             }
         }
     }
@@ -187,6 +192,16 @@ class TareasActivity : ComponentActivity() {
         }
     }
 
+    @Composable
+    private fun BotonAgregar(grupo: Grupo) {
+        FloatingActionButton(
+            onClick = { irAAgregar(grupo.nombre) },
+            modifier = Modifier.size(40.dp)
+        ) {
+            Icon(imageVector = Icons.Default.Edit, contentDescription = "Agregar Tarea")
+        }
+    }
+
     private fun irAChat(nombre: String) {
         val intent = Intent(this, ChatActivity::class.java).apply {
             putExtra("nombre", nombre)
@@ -196,6 +211,13 @@ class TareasActivity : ComponentActivity() {
 
     private fun irAGrupos(nombre: String) {
         val intent = Intent(this, GrupoActivity::class.java).apply {
+            putExtra("nombre", nombre)
+        }
+        startActivity(intent)
+    }
+
+    private fun irAAgregar(nombre: String) {
+        val intent = Intent(this, CrearTareaActivity::class.java).apply {
             putExtra("nombre", nombre)
         }
         startActivity(intent)

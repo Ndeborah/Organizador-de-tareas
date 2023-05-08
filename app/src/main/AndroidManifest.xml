@@ -13,6 +13,11 @@
         android:theme="@style/Theme.Organizador"
         tools:targetApi="31">
         <activity
+            android:name=".CrearTareaActivity"
+            android:exported="false"
+            android:label="@string/title_activity_crear_tarea"
+            android:theme="@style/Theme.Organizador" />
+        <activity
             android:name=".GrupoActivity"
             android:exported="false"
             android:label="@string/title_activity_grupo"

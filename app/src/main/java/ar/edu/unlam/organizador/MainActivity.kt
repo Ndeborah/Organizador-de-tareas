@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun Menu() {
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Purple40),
@@ -94,8 +94,8 @@ class MainActivity : ComponentActivity() {
             contentPadding = PaddingValues(10.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            items(datos) {
-                item -> ListItemRow(item)
+            items(datos) { item ->
+                ListItemRow(item)
             }
         }
     }
@@ -106,7 +106,8 @@ class MainActivity : ComponentActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White)
-                .padding(horizontal = 10.dp, vertical = 10.dp).clickable(enabled = true, onClick = {ingresarAGrupo(item.nombre)})
+                .padding(horizontal = 10.dp, vertical = 10.dp)
+                .clickable(enabled = true, onClick = { ingresarAGrupo(item.nombre) })
         ) {
             Column() {
                 Text(text = item.nombre)
@@ -117,7 +118,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun Botones() {
-        Column (
+        Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.SpaceAround,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -131,6 +132,11 @@ class MainActivity : ComponentActivity() {
             Button(onClick = { /*TODO*/ }) {
                 Text("Unirse a un Grupo", color = Color.White)
             }
+            //BOTÓN PRUEBA CRASHLYTICS
+
+            /*Button(onClick = {throw RuntimeException("Test Crash")}) {
+                Text(text = "Prueba")
+            }*/
         }
     }
 
@@ -155,4 +161,5 @@ class MainActivity : ComponentActivity() {
         }
         startActivity(intent)
     }
+
 }

@@ -34,6 +34,7 @@ import ar.edu.unlam.organizador.repositorios.GrupoRepositorio
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.theme.Pink80
 import ar.edu.unlam.organizador.ui.theme.Purple40
+import com.google.firebase.analytics.FirebaseAnalytics
 
 class CrearGrupoActivity : ComponentActivity() {
     private lateinit var nuevoGrupo: Grupo
@@ -44,6 +45,7 @@ class CrearGrupoActivity : ComponentActivity() {
         setContent {
             OrganizadorTheme {
                 Base()
+
             }
         }
     }

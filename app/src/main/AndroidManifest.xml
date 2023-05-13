@@ -18,6 +18,11 @@
         android:theme="@style/Theme.Organizador"
         tools:targetApi="31">
         <activity
+            android:name=".CrearTareaActivity"
+            android:exported="false"
+            android:label="@string/title_activity_crear_tarea"
+            android:theme="@style/Theme.Organizador" />
+        <activity
             android:name=".GrupoActivity"
             android:exported="false"
             android:label="@string/title_activity_grupo"
@@ -28,12 +33,12 @@
             android:label="@string/title_activity_crear_grupo"
             android:theme="@style/Theme.Organizador" />
         <activity
-            android:name=".ChatActivity"
+            android:name=".ChatDeGrupoActivity"
             android:exported="false"
             android:label="@string/title_activity_chat"
             android:theme="@style/Theme.Organizador" />
         <activity
-            android:name=".TareasActivity"
+            android:name=".TareasDeGrupoActivity"
             android:exported="false"
             android:label="@string/title_activity_main2"
             android:theme="@style/Theme.Organizador" />

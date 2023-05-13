@@ -37,7 +37,6 @@ import ar.edu.unlam.organizador.ui.theme.Purple40
 
 class CrearGrupoActivity : ComponentActivity() {
     private lateinit var nuevoGrupo: Grupo
-
     var nombre: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,51 +50,15 @@ class CrearGrupoActivity : ComponentActivity() {
 
     @Composable
     private fun Base() {
-        // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = Color.Black
         ) {
             Column {
-                Menu()
                 CrearGrupo()
             }
         }
     }
-
-    @Composable
-    private fun Menu() {
-        Row (
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Purple40),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(
-                onClick = {
-                    irAChat()
-                    onStop()
-                }
-            ) {
-                Text(text = "Chat")
-            }
-            Button(
-                onClick = {}
-            ) {
-                Text(text = "Grupos", color = Pink80)
-            }
-            Button(
-                onClick = {
-                    irATareas()
-                    onStop()
-                }
-            ) {
-                Text(text = "Tareas")
-            }
-        }
-    }
-
 
     @Composable
     private fun CrearGrupo() {
@@ -121,13 +84,18 @@ class CrearGrupoActivity : ComponentActivity() {
             }
         }
         Spacer(modifier = Modifier.size(100.dp))
-        Button(onClick = {
-            nuevoGrupo = Grupo(nombre, 0, "")
-            GrupoRepositorio.agregar(nuevoGrupo)
-            irAGrupos()
-            finish()
-        }) {
-            Text(text = "Crear")
+        Column() {
+            Button(onClick = {
+                nuevoGrupo = Grupo(nombre, 0, "")
+                GrupoRepositorio.agregar(nuevoGrupo)
+                irAGrupos()
+                finish()
+            }) {
+                Text(text = "Crear")
+            }
+            Button(onClick = { finish() }) {
+                Text(text = "Cancelar")
+            }
         }
     }
 
@@ -145,18 +113,8 @@ class CrearGrupoActivity : ComponentActivity() {
         nombre = text.text
     }
 
-    private fun irAChat() {
-        val intent = Intent(this, ChatActivity::class.java)
-        startActivity(intent)
-    }
-
     private fun irAGrupos() {
         val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun irATareas() {
-        val intent = Intent(this, TareasActivity::class.java)
         startActivity(intent)
     }
 }

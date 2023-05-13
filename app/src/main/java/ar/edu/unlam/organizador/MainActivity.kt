@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.organizador.entidades.Grupo
 import ar.edu.unlam.organizador.repositorios.GrupoRepositorio
+import ar.edu.unlam.organizador.repositorios.TareaRepositorio
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.theme.Pink80
 import ar.edu.unlam.organizador.ui.theme.Purple40
@@ -109,9 +110,15 @@ class MainActivity : ComponentActivity() {
                 .padding(horizontal = 10.dp, vertical = 10.dp)
                 .clickable(enabled = true, onClick = { ingresarAGrupo(item.nombre) })
         ) {
-            Column() {
+            Column {
                 Text(text = item.nombre)
-                Text(text = "Pendientes: ")
+                Text(
+                    text = "Pendientes: ${
+                        TareaRepositorio.obtenerListaDeTareasPendientesPorGrupo(
+                            item.nombre
+                        ).size
+                    }"
+                )
             }
         }
     }
@@ -146,12 +153,18 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun irAChat() {
-        val intent = Intent(this, ChatActivity::class.java)
+        val intent = Intent(this, ChatDeGrupoActivity::class.java).apply {
+            // Harcodeamos esto de momento hasta que tengamos la vista de Grupos resuelta.
+            putExtra("nombre", "Grupo 1")
+        }
         startActivity(intent)
     }
 
     private fun irATareas() {
-        val intent = Intent(this, TareasActivity::class.java)
+        val intent = Intent(this, TareasDeGrupoActivity::class.java).apply {
+            // Harcodeamos esto de momento hasta que tengamos la vista de Tareas resuelta.
+            putExtra("nombre", "Grupo 1")
+        }
         startActivity(intent)
     }
 

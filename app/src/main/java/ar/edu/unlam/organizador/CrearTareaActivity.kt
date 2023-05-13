@@ -5,30 +5,36 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.organizador.entidades.Grupo
+import ar.edu.unlam.organizador.entidades.Tarea
 import ar.edu.unlam.organizador.repositorios.GrupoRepositorio
+import ar.edu.unlam.organizador.repositorios.TareaRepositorio
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
-import ar.edu.unlam.organizador.ui.theme.Pink80
-import ar.edu.unlam.organizador.ui.theme.Purple40
 
-class GrupoActivity : ComponentActivity() {
+class CrearTareaActivity : ComponentActivity() {
+    private lateinit var nuevaTarea: Tarea
+    var nombreTarea: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,62 +45,26 @@ class GrupoActivity : ComponentActivity() {
 
         setContent {
             OrganizadorTheme {
-                Base(grupo, nombre)
+                Base(grupo)
             }
         }
     }
 
     @Composable
-    private fun Base(grupo: Grupo, nombre: String) {
+    private fun Base(grupo: Grupo) {
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = Color.Black
         ) {
             Column {
-                Menu(nombre)
-                NombreDeGrupo(grupo)
-                Participantes()
-                Salir()
+                CrearTarea(grupo = grupo)
             }
         }
     }
 
     @Composable
-    private fun Menu(nombre: String) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Purple40),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(
-                onClick = {
-                    irAChat(nombre)
-                    onStop()
-                }
-            ) {
-                Text(text = "Chat")
-            }
-            Button(
-                onClick = {}
-            ) {
-                Text(text = "Grupos", color = Pink80)
-            }
-            Button(
-                onClick = {
-                    irATareas(nombre)
-                    onStop()
-                }
-            ) {
-                Text(text = "Tareas")
-            }
-        }
-    }
-
-    @Composable
-    private fun NombreDeGrupo(grupo: Grupo) {
+    private fun CrearTarea(grupo: Grupo) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -102,14 +72,10 @@ class GrupoActivity : ComponentActivity() {
                 .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
             Column() {
-                Text(text = grupo.nombre)
+                Text(text = "Crear Tarea")
             }
         }
-    }
-
-    @Composable
-    private fun Participantes() {
-        Spacer(modifier = Modifier.size(5.dp))
+        Spacer(modifier = Modifier.size(100.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -117,41 +83,48 @@ class GrupoActivity : ComponentActivity() {
                 .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
             Column {
-                Text(text = "Participantes")
+                IngresarNombre().toString()
             }
         }
-        Spacer(modifier = Modifier.size(5.dp))
-    }
-
-    @Composable
-    private fun Salir() {
-        Column {
+        Spacer(modifier = Modifier.size(100.dp))
+        Column() {
             Button(onClick = {
-                irAMain()
-                finish()
+                if (nombreTarea != "") {
+                    nuevaTarea = Tarea(nombreTarea, grupo.nombre)
+                    TareaRepositorio.agregarTareaPendiente(nuevaTarea)
+                    irATareas(grupo)
+                    finish()
+                }
+
             }) {
-                Text(text = "Salir")
+                Text(text = "Crear")
+            }
+            Button(onClick = { finish() }) {
+                Text(text = "Cancelar")
             }
         }
     }
 
-    private fun irAChat(nombre: String) {
-        val intent = Intent(this, ChatDeGrupoActivity::class.java).apply {
-            putExtra("nombre", nombre)
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun IngresarNombre(){
+        var text by remember { mutableStateOf(TextFieldValue("")) }
+        OutlinedTextField (
+            value = text,
+            onValueChange = { text = it } ,
+            label = { Text(text = "Ingresar el nombre de la Tarea")},
+            singleLine = true,
+            modifier = Modifier.padding(top = 20.dp)
+        )
+        if(text.text.isNotEmpty()) {
+            nombreTarea = text.text
         }
-        startActivity(intent)
     }
 
-    private fun irATareas(nombre: String) {
+    private fun irATareas(grupo: Grupo) {
         val intent = Intent(this, TareasDeGrupoActivity::class.java).apply {
-            putExtra("nombre", nombre)
+            putExtra("nombre", grupo.nombre)
         }
-
-        startActivity(intent)
-    }
-
-    private fun irAMain() {
-        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 }

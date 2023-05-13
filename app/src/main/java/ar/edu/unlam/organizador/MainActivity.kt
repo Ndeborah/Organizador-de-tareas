@@ -37,9 +37,6 @@ import com.google.firebase.ktx.Firebase
 lateinit var firebaseAnalytics: FirebaseAnalytics
 
 class MainActivity : ComponentActivity() {
-    private fun gtag(s: String, s1: String, function: () -> Unit) {
-
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

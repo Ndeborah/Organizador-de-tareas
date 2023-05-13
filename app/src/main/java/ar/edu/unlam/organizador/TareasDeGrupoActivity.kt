@@ -37,13 +37,13 @@ import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.theme.Pink80
 import ar.edu.unlam.organizador.ui.theme.Purple40
 
-class TareasActivity : ComponentActivity() {
+class TareasDeGrupoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val bundle = intent.extras
         val nombre: String? = bundle?.getString("nombre")
-        val grupo: Grupo = GrupoRepositorio.ingresar(nombre!!)
+        val grupo: Grupo = GrupoRepositorio.buscarGrupo(nombre!!)
 
         setContent {
             OrganizadorTheme {
@@ -62,8 +62,16 @@ class TareasActivity : ComponentActivity() {
             Column {
                 Menu(nombre)
                 NombreDeGrupo(grupo)
-                TareasPendientes(datos = TareaRepositorio.obtenerListaDeTareasPendientesPorGrupo(nombre))
-                TareasRealizadas(datos = TareaRepositorio.obtenerListaDeTareasRealizadasPorGrupo(nombre))
+                TareasPendientes(
+                    datos = TareaRepositorio.obtenerListaDeTareasPendientesPorGrupo(
+                        nombre
+                    )
+                )
+                TareasRealizadas(
+                    datos = TareaRepositorio.obtenerListaDeTareasRealizadasPorGrupo(
+                        nombre
+                    )
+                )
                 BotonAgregar(grupo = grupo)
             }
         }
@@ -71,7 +79,7 @@ class TareasActivity : ComponentActivity() {
 
     @Composable
     private fun Menu(nombre: String) {
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Purple40),
@@ -134,8 +142,8 @@ class TareasActivity : ComponentActivity() {
             contentPadding = PaddingValues(10.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            items(datos) {
-                    item -> ListItemRowPendiente(item)
+            items(datos) { item ->
+                ListItemRowPendiente(item)
             }
         }
     }
@@ -172,8 +180,8 @@ class TareasActivity : ComponentActivity() {
             contentPadding = PaddingValues(10.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            items(datos) {
-                    item -> ListItemRowRealizada(item)
+            items(datos) { item ->
+                ListItemRowRealizada(item)
             }
         }
     }
@@ -203,7 +211,7 @@ class TareasActivity : ComponentActivity() {
     }
 
     private fun irAChat(nombre: String) {
-        val intent = Intent(this, ChatActivity::class.java).apply {
+        val intent = Intent(this, ChatDeGrupoActivity::class.java).apply {
             putExtra("nombre", nombre)
         }
         startActivity(intent)

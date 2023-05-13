@@ -35,7 +35,7 @@ class GrupoActivity : ComponentActivity() {
 
         val bundle = intent.extras
         val nombre: String? = bundle?.getString("nombre")
-        val grupo: Grupo = GrupoRepositorio.ingresar(nombre!!)
+        val grupo: Grupo = GrupoRepositorio.buscarGrupo(nombre!!)
 
         setContent {
             OrganizadorTheme {
@@ -62,7 +62,7 @@ class GrupoActivity : ComponentActivity() {
 
     @Composable
     private fun Menu(nombre: String) {
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Purple40),
@@ -116,7 +116,7 @@ class GrupoActivity : ComponentActivity() {
                 .background(Color.White)
                 .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
-            Column() {
+            Column {
                 Text(text = "Participantes")
             }
         }
@@ -125,7 +125,7 @@ class GrupoActivity : ComponentActivity() {
 
     @Composable
     private fun Salir() {
-        Column() {
+        Column {
             Button(onClick = {
                 irAMain()
                 finish()
@@ -136,16 +136,17 @@ class GrupoActivity : ComponentActivity() {
     }
 
     private fun irAChat(nombre: String) {
-        val intent = Intent(this, ChatActivity::class.java).apply {
+        val intent = Intent(this, ChatDeGrupoActivity::class.java).apply {
             putExtra("nombre", nombre)
         }
         startActivity(intent)
     }
 
     private fun irATareas(nombre: String) {
-        val intent = Intent(this, TareasActivity::class.java).apply {
+        val intent = Intent(this, TareasDeGrupoActivity::class.java).apply {
             putExtra("nombre", nombre)
         }
+
         startActivity(intent)
     }
 

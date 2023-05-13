@@ -21,13 +21,14 @@ object GrupoRepositorio {
         return grupos.any { grupo: Grupo -> grupo.nombre == nombre }
     }
 
-    fun ingresar(nombre: String): Grupo {
-        var grupoIngresado = Grupo()
+    fun buscarGrupo(nombre: String): Grupo {
+        var grupoEncontrado = Grupo()
         for (elemento in grupos) {
             if (elemento.nombre == nombre) {
-                grupoIngresado = elemento
+                grupoEncontrado = elemento
             }
         }
-        return grupoIngresado
+
+        return grupoEncontrado
     }
 }

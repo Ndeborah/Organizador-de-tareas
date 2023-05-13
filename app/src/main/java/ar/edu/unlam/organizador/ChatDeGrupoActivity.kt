@@ -26,13 +26,13 @@ import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.theme.Pink80
 import ar.edu.unlam.organizador.ui.theme.Purple40
 
-class ChatActivity : ComponentActivity() {
+class ChatDeGrupoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val bundle = intent.extras
         val nombre: String? = bundle?.getString("nombre")
-        val grupo: Grupo = GrupoRepositorio.ingresar(nombre!!)
+        val grupo: Grupo = GrupoRepositorio.buscarGrupo(nombre!!)
 
         setContent {
             OrganizadorTheme {
@@ -103,7 +103,7 @@ class ChatActivity : ComponentActivity() {
     }
 
     private fun irATareas(nombre: String) {
-        val intent = Intent(this, TareasActivity::class.java).apply {
+        val intent = Intent(this, TareasDeGrupoActivity::class.java).apply {
             putExtra("nombre", nombre)
         }
         startActivity(intent)

@@ -112,7 +112,13 @@ class MainActivity : ComponentActivity() {
         ) {
             Column {
                 Text(text = item.nombre)
-                Text(text = "Pendientes: ${TareaRepositorio.obtenerListaDeTareasPendientesPorGrupo(item.nombre).size}")
+                Text(
+                    text = "Pendientes: ${
+                        TareaRepositorio.obtenerListaDeTareasPendientesPorGrupo(
+                            item.nombre
+                        ).size
+                    }"
+                )
             }
         }
     }
@@ -147,12 +153,18 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun irAChat() {
-        val intent = Intent(this, ChatActivity::class.java)
+        val intent = Intent(this, ChatDeGrupoActivity::class.java).apply {
+            // Harcodeamos esto de momento hasta que tengamos la vista de Grupos resuelta.
+            putExtra("nombre", "Grupo 1")
+        }
         startActivity(intent)
     }
 
     private fun irATareas() {
-        val intent = Intent(this, TareasActivity::class.java)
+        val intent = Intent(this, TareasDeGrupoActivity::class.java).apply {
+            // Harcodeamos esto de momento hasta que tengamos la vista de Tareas resuelta.
+            putExtra("nombre", "Grupo 1")
+        }
         startActivity(intent)
     }
 

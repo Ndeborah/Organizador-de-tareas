@@ -30,10 +30,18 @@ import ar.edu.unlam.organizador.repositorios.TareaRepositorio
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.theme.Pink80
 import ar.edu.unlam.organizador.ui.theme.Purple40
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
+
+lateinit var firebaseAnalytics: FirebaseAnalytics
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        firebaseAnalytics = Firebase.analytics
+
         setContent {
             OrganizadorTheme {
                 Base()
@@ -132,12 +140,18 @@ class MainActivity : ComponentActivity() {
         ) {
             Button(onClick = {
                 irACrearGrupo()
-                onStop()
+                                onStop()
             }) {
                 Text("Crear Grupo", color = Color.White)
+                val bundle = Bundle()
+                val Grupo = ""
+                bundle.putString(FirebaseAnalytics.Param.GROUP_ID, Grupo)
+                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.JOIN_GROUP, bundle)
+
             }
             Button(onClick = { /*TODO*/ }) {
                 Text("Unirse a un Grupo", color = Color.White)
+
             }
             //BOTÓN PRUEBA CRASHLYTICS
 

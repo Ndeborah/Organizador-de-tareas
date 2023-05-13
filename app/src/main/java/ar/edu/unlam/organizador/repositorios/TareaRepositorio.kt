@@ -16,6 +16,14 @@ object TareaRepositorio {
         agregarTareaRealizada(Tarea("Tarea 2", "Grupo 3"))
     }
 
+    fun listarTareasPendietes(): MutableList<Tarea> {
+        return tareasPendientes
+    }
+
+    fun listarTareasRealizadas(): MutableList<Tarea> {
+        return tareasRealizadas
+    }
+
     fun agregarTareaPendiente(tarea: Tarea) {
         tareasPendientes.add(tarea)
     }

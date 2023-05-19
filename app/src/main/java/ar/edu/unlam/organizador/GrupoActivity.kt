@@ -1,5 +1,6 @@
 package ar.edu.unlam.organizador
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,7 +9,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,9 +24,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.organizador.entidades.Grupo
 import ar.edu.unlam.organizador.repositorios.GrupoRepositorio
+import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
-import ar.edu.unlam.organizador.ui.theme.Pink80
-import ar.edu.unlam.organizador.ui.theme.Purple40
 
 class GrupoActivity : ComponentActivity() {
 
@@ -39,58 +38,55 @@ class GrupoActivity : ComponentActivity() {
 
         setContent {
             OrganizadorTheme {
-                Base(grupo, nombre)
+                Base(this, grupo, nombre)
             }
         }
     }
 
     @Composable
-    private fun Base(grupo: Grupo, nombre: String) {
+    private fun Base(context: Context, grupo: Grupo, nombre: String) {
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = Color.Black
         ) {
             Column {
-                Menu(nombre)
+                Menu(context)
                 NombreDeGrupo(grupo)
                 Participantes()
+                Botones()
                 Salir()
             }
         }
     }
 
     @Composable
-    private fun Menu(nombre: String) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Purple40),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
+    private fun Botones() {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.SpaceAround,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(
-                onClick = {
-                    irAChat(nombre)
-                    onStop()
-                }
-            ) {
-                Text(text = "Chat")
+            Button(onClick = {
+                irACrearGrupo()
+                onStop()
+            }) {
+                Text("Crear Grupo", color = Color.White)
             }
-            Button(
-                onClick = {}
-            ) {
-                Text(text = "Grupos", color = Pink80)
+            Button(onClick = { /*TODO*/ }) {
+                Text("Unirse a un Grupo", color = Color.White)
             }
-            Button(
-                onClick = {
-                    irATareas(nombre)
-                    onStop()
-                }
-            ) {
-                Text(text = "Tareas")
-            }
+            //BOTÓN PRUEBA CRASHLYTICS
+
+            /*Button(onClick = {throw RuntimeException("Test Crash")}) {
+                Text(text = "Prueba")
+            }*/
         }
+    }
+
+    private fun irACrearGrupo() {
+        val intent = Intent(this, CrearGrupoActivity::class.java)
+        startActivity(intent)
     }
 
     @Composable
@@ -101,7 +97,7 @@ class GrupoActivity : ComponentActivity() {
                 .background(Color.White)
                 .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
-            Column() {
+            Column {
                 Text(text = grupo.nombre)
             }
         }
@@ -135,20 +131,6 @@ class GrupoActivity : ComponentActivity() {
         }
     }
 
-    private fun irAChat(nombre: String) {
-        val intent = Intent(this, ChatDeGrupoActivity::class.java).apply {
-            putExtra("nombre", nombre)
-        }
-        startActivity(intent)
-    }
-
-    private fun irATareas(nombre: String) {
-        val intent = Intent(this, TareasDeGrupoActivity::class.java).apply {
-            putExtra("nombre", nombre)
-        }
-
-        startActivity(intent)
-    }
 
     private fun irAMain() {
         val intent = Intent(this, MainActivity::class.java)

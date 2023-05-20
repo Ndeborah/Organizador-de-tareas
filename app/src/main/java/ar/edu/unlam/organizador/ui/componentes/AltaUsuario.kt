@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AltaUsuarioForm(
@@ -24,7 +25,8 @@ fun AltaUsuarioForm(
     numero: String,
     cambioDeValorNumero: (String) -> Unit,
     erroresNumero: MutableList<String>,
-    accionAceptar: () -> Unit
+    accionAceptar: () -> Unit,
+    validData: Boolean
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -38,7 +40,9 @@ fun AltaUsuarioForm(
         ) {
             TextField(
                 value = texto,
-                onValueChange = { cambioDeValorNombre(it) },
+                onValueChange = {
+                    cambioDeValorNombre(it)
+                },
                 label = { Text("Ingrese nombre") },
             )
             erroresNombre.forEach {
@@ -70,7 +74,11 @@ fun AltaUsuarioForm(
                 )
             }
         }
-        Button(onClick = accionAceptar) {
+        Button(
+            onClick = accionAceptar,
+            enabled = validData,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
             Text(text = "Aceptar")
         }
     }

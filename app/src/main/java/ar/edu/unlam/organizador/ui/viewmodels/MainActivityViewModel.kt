@@ -13,6 +13,7 @@ data class MainUiState(
     val currentNameErrors: MutableList<String> = mutableListOf(),
     val currentTelefono: String = "",
     val currentTelefonoErrors: MutableList<String> = mutableListOf(),
+    val validForm: Boolean = false
 )
 
 
@@ -20,15 +21,32 @@ class MainActivityViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
+    fun validarFormulario() {
+        if (this._uiState.value.currentNameErrors.size == 0
+            && this._uiState.value.currentTelefonoErrors.size == 0
+            && this._uiState.value.currentName != ""
+            && this._uiState.value.currentTelefono != ""
+        ) {
+            _uiState.value = this._uiState.value.copy(
+                validForm = true
+            )
+        } else {
+            _uiState.value = this._uiState.value.copy(
+                validForm = false
+            )
+        }
+    }
+
     fun actualizarNombre(nombre: String) {
         val errors = mutableListOf<String>()
         if (nombre.length < 4) {
-            errors.add("El nombre debe de tener al menos cuatro caracteres 😳.")
+            errors.add("Ingrese al menos cuatro caracteres 😳.")
         }
         _uiState.value = _uiState.value.copy(
             currentName = nombre,
             currentNameErrors = errors
         )
+        validarFormulario()
     }
 
     fun actualizarTelefono(telefono: String) {
@@ -40,6 +58,7 @@ class MainActivityViewModel : ViewModel() {
             currentTelefono = telefono,
             currentTelefonoErrors = errors
         )
+        validarFormulario()
     }
 
     fun crearUsuario() {

@@ -36,11 +36,13 @@ import ar.edu.unlam.organizador.ui.viewmodels.MainActivityViewModel
 class MainActivity : ComponentActivity() {
     private val mainViewModel by viewModels<MainActivityViewModel>()
 
+    //Con esta función se crea el usuario se finaliza la activity inicial y re vuelve a iniciar ya en la vista principal.
+    //Porque la activity de inicio es la activity principal cuando hay un usuario.
     private fun navigate() {
         mainViewModel.crearUsuario()
         val intent = intent
-        finish()
-        startActivity(intent)
+        finish() //Finaliza luego de crear el usuario.
+        startActivity(intent) //Reinicializa para ver la vista principal.
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +61,8 @@ class MainActivity : ComponentActivity() {
                         numero = mainUiState.currentTelefono,
                         cambioDeValorNumero = mainViewModel::actualizarTelefono,
                         erroresNumero = mainUiState.currentTelefonoErrors,
-                        accionAceptar = this::navigate
+                        accionAceptar = this::navigate,
+                        validData = mainUiState.validForm
                     )
                 }
             }

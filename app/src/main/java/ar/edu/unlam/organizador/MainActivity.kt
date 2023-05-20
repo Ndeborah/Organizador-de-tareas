@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,20 +20,48 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.organizador.entidades.Tarea
 import ar.edu.unlam.organizador.repositorios.TareaRepositorio
+import ar.edu.unlam.organizador.repositorios.UsuarioRepositorio
+import ar.edu.unlam.organizador.ui.componentes.AltaUsuarioForm
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
+import ar.edu.unlam.organizador.ui.viewmodels.MainActivityViewModel
 
 class MainActivity : ComponentActivity() {
+    private val mainViewModel by viewModels<MainActivityViewModel>()
+
+    private fun navigate() {
+        mainViewModel.crearUsuario()
+        val intent = intent
+        finish()
+        startActivity(intent)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val usuario = UsuarioRepositorio.traerUsuarioLocal()
         setContent {
+            val mainUiState by mainViewModel.uiState.collectAsState()
             OrganizadorTheme {
-                Base(this)
+                if (usuario != null) {
+                    Base(this)
+                } else {
+                    AltaUsuarioForm(
+                        texto = mainUiState.currentName,
+                        cambioDeValorNombre = mainViewModel::actualizarNombre,
+                        erroresNombre = mainUiState.currentNameErrors,
+                        numero = mainUiState.currentTelefono,
+                        cambioDeValorNumero = mainViewModel::actualizarTelefono,
+                        erroresNumero = mainUiState.currentTelefonoErrors,
+                        accionAceptar = this::navigate
+                    )
+                }
             }
         }
     }
@@ -51,7 +80,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 
     @Composable
     private fun MostrarTareas(tareas: MutableList<Tarea>) {

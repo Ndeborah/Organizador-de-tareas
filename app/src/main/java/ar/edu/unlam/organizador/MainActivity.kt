@@ -25,7 +25,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import ar.edu.unlam.organizador.entidades.Grupo
 import ar.edu.unlam.organizador.entidades.Tarea
+import ar.edu.unlam.organizador.repositorios.GrupoRepositorio
 import ar.edu.unlam.organizador.repositorios.TareaRepositorio
 import ar.edu.unlam.organizador.repositorios.UsuarioRepositorio
 import ar.edu.unlam.organizador.ui.componentes.AltaUsuarioForm
@@ -78,8 +80,49 @@ class MainActivity : ComponentActivity() {
         ) {
             Column {
                 Menu(context)
-                MostrarTareas(TareaRepositorio.tareasPendientes)
-                MostrarTareas(TareaRepositorio.tareasRealizadas)
+                MostrarGrupos(GrupoRepositorio.grupos)
+            }
+        }
+    }
+
+    @Composable
+    private fun MostrarGrupos(grupos: MutableList<Grupo>) {
+        LazyColumn(
+            contentPadding = PaddingValues(10.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            items(grupos) { grupo ->
+                FilaDeGrupo(grupo)
+            }
+        }
+    }
+
+    @Composable
+    private fun FilaDeGrupo(grupo: Grupo) {
+        onStop()
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .padding(horizontal = 10.dp, vertical = 10.dp)
+                .clickable(enabled = true, onClick = { nombreDeGrupo(grupo.nombre) })
+        ) {
+            Column {
+                Text(text = grupo.nombre)
+                Text(
+                    text = "Pendientes: ${
+                        TareaRepositorio.obtenerListaDeTareasPendientesPorGrupo(
+                            grupo.nombre
+                        ).size
+                    }"
+                )
+                Text(
+                    text = "Realizadas: ${
+                        TareaRepositorio.obtenerListaDeTareasRealizadasPorGrupo(
+                            grupo.nombre
+                        ).size
+                    }"
+                )
             }
         }
     }
@@ -91,20 +134,21 @@ class MainActivity : ComponentActivity() {
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             items(tareas) { tarea ->
-                ListItemRow(tarea)
+                FilaDeTarea(tarea)
             }
         }
     }
 
+
     @Composable
-    private fun ListItemRow(tarea: Tarea) {
+    private fun FilaDeTarea(tarea: Tarea) {
         onStop()
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White)
                 .padding(horizontal = 10.dp, vertical = 10.dp)
-                .clickable(enabled = true, onClick = { ingresarAGrupo(tarea.nombre) })
+                .clickable(enabled = true, onClick = { nombreDeGrupo(tarea.nombre) })
         ) {
             Column {
                 Text(text = tarea.nombre)
@@ -119,8 +163,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
-    private fun ingresarAGrupo(nombre: String) {
+    private fun nombreDeGrupo(nombre: String) {
         val intent = Intent(this, GrupoActivity::class.java).apply {
             putExtra("nombre", nombre)
         }

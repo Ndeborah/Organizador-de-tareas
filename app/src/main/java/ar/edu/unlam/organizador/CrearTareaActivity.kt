@@ -92,7 +92,7 @@ class CrearTareaActivity : ComponentActivity() {
                 if (nombreTarea != "") {
                     nuevaTarea = Tarea(nombreTarea, grupo.nombre)
                     TareaRepositorio.agregarTareaPendiente(nuevaTarea)
-                    irATareas(grupo)
+                    irAGrupo(grupo)
                     finish()
                 }
 
@@ -121,8 +121,8 @@ class CrearTareaActivity : ComponentActivity() {
         }
     }
 
-    private fun irATareas(grupo: Grupo) {
-        val intent = Intent(this, TareasDeGrupoActivity::class.java).apply {
+    private fun irAGrupo(grupo: Grupo) {
+        val intent = Intent(this, GrupoActivity::class.java).apply {
             putExtra("nombre", grupo.nombre)
         }
         startActivity(intent)

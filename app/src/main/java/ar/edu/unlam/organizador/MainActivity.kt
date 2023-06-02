@@ -1,5 +1,6 @@
 package ar.edu.unlam.organizador
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -23,6 +24,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +38,11 @@ import ar.edu.unlam.organizador.ui.componentes.AltaUsuarioForm
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.viewmodels.MainActivityViewModel
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.annotations.Nullable
 
 class MainActivity : ComponentActivity() {
     private val mainViewModel by viewModels<MainActivityViewModel>()
@@ -47,6 +55,8 @@ class MainActivity : ComponentActivity() {
         finish() //Finaliza luego de crear el usuario.
         startActivity(intent) //Reinicializa para ver la vista principal.
     }
+
+    var database = FirebaseDatabase.getInstance().reference.child("Grupos")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +82,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @SuppressLint("UnrememberedMutableState")
     @Composable
     private fun Base(context: Context) {
         // A surface container using the 'background' color from the theme
@@ -81,33 +92,65 @@ class MainActivity : ComponentActivity() {
         ) {
             Column {
                 Menu(context)
-                MostrarGrupos(GrupoRepositorio.grupos)
+                var grupos = mutableStateListOf<String?>()
+                MostrarGrupos(grupos)
                 Botones()
+
+
+                database.addChildEventListener(object : ChildEventListener {
+                    override fun onChildAdded(
+                        snapshot: DataSnapshot, @Nullable previousChildName: String?
+                    ) {
+                        grupos.add(snapshot.getValue(String::class.java)!!)
+                    }
+
+                    override fun onChildChanged(
+                        snapshot: DataSnapshot,
+                        previousChildName: String?
+                    ) {
+                        TODO("Not yet implemented")
+                    }
+
+                    override fun onChildRemoved(snapshot: DataSnapshot) {
+                        TODO("Not yet implemented")
+                    }
+
+                    override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                        TODO("Not yet implemented")
+                    }
+
+
+                    override fun onCancelled(error: DatabaseError) {
+
+                    }
+                })
             }
         }
     }
 
+
     @Composable
-    private fun MostrarGrupos(grupos: MutableList<Grupo>) {
+    private fun MostrarGrupos(grupos: SnapshotStateList<String?>) {
         LazyColumn(
             contentPadding = PaddingValues(10.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             items(grupos) { grupo ->
-                FilaDeGrupo(grupo)
+                //FilaDeGrupo("grupos")
+
             }
         }
     }
 
-    @Composable
-    private fun FilaDeGrupo(grupo: Grupo) {
+    /*@Composable
+    private fun FilaDeGrupo(grupo: String) {
         onStop()
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White)
                 .padding(horizontal = 10.dp, vertical = 10.dp)
-                .clickable(enabled = true, onClick = { nombreDeGrupo(grupo.nombre) })
+                .clickable(enabled = true, onClick = { nombreDeGrupo(grupo) })
         ) {
             Column {
                 Text(text = grupo.nombre)
@@ -127,7 +170,7 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
-    }
+    }*/
 
     private fun nombreDeGrupo(nombre: String) {
         val intent = Intent(this, GrupoActivity::class.java).apply {

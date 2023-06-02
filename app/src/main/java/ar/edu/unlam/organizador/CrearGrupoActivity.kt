@@ -29,10 +29,17 @@ import androidx.compose.ui.unit.dp
 import ar.edu.unlam.organizador.entidades.Grupo
 import ar.edu.unlam.organizador.repositorios.GrupoRepositorio
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 class CrearGrupoActivity : ComponentActivity() {
     private lateinit var nuevoGrupo: Grupo
     var nombre: String = ""
+    var contrasenia = ""
+    //var grupoId = 0
+    var database = FirebaseDatabase.getInstance().reference.child("Grupos")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,8 +88,17 @@ class CrearGrupoActivity : ComponentActivity() {
         Spacer(modifier = Modifier.size(100.dp))
         Column() {
             Button(onClick = {
-                nuevoGrupo = Grupo(nombre, 0, "")
-                GrupoRepositorio.agregar(nuevoGrupo)
+                //grupoId++
+                val grupoMap = HashMap<String, String>()
+                grupoMap["Nombre"] = nombre
+                grupoMap["Password"] = contrasenia
+                database.push().setValue(grupoMap)
+                //database.child(grupoId.toString()).setValue(nombre)
+                //nuevoGrupo = Grupo(nombre,  "")
+
+                //GrupoRepositorio.agregar(nuevoGrupo)
+
+
                 irAGrupos()
                 finish()
             })

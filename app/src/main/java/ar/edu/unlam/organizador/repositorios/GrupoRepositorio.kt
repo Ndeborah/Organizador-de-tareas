@@ -6,18 +6,15 @@ import com.google.firebase.database.ValueEventListener
 
 object GrupoRepositorio {
 
-    //val grupos = mutableListOf<Grupo>()
-    val grupos = mutableListOf<HashMap<String, String>>()
+    val grupos = mutableListOf<Grupo>()
 
     init {
-        grupos.add(hashMapOf<String, String>("Nombre" to "Grupo 1", "Password" to ""))
-
-        /*agregar(Grupo("Grupo 1", ""))
+        agregar(Grupo("Grupo 1", ""))
         agregar(Grupo("Grupo 2", ""))
-        agregar(Grupo("Grupo 3", ""))*/
+        agregar(Grupo("Grupo 3", ""))
     }
 
-    /*fun agregar(grupo: Grupo) {
+    fun agregar(grupo: Grupo) {
         if (!existe(grupo.nombre)) {
             grupos.add(grupo)
         }
@@ -36,5 +33,5 @@ object GrupoRepositorio {
         }
 
         return grupoEncontrado
-    }*/
+    }
 }

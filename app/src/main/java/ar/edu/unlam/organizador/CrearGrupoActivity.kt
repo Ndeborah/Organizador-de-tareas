@@ -38,7 +38,7 @@ class CrearGrupoActivity : ComponentActivity() {
     private lateinit var nuevoGrupo: Grupo
     var nombre: String = ""
     var contrasenia = ""
-    //var grupoId = 0
+    var grupoId = 0
     var database = FirebaseDatabase.getInstance().reference.child("Grupos")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,13 +88,17 @@ class CrearGrupoActivity : ComponentActivity() {
         Spacer(modifier = Modifier.size(100.dp))
         Column() {
             Button(onClick = {
-                //grupoId++
-                val grupoMap = HashMap<String, String>()
+                grupoId++
+                nuevoGrupo = Grupo(nombre, contrasenia)
+                database.push().setValue(nuevoGrupo)
+
+
+                /*val grupoMap = HashMap<String, String>()
                 grupoMap["Nombre"] = nombre
                 grupoMap["Password"] = contrasenia
                 database.push().setValue(grupoMap)
                 //database.child(grupoId.toString()).setValue(nombre)
-                //nuevoGrupo = Grupo(nombre,  "")
+                //nuevoGrupo = Grupo(nombre,  "")*/
 
                 //GrupoRepositorio.agregar(nuevoGrupo)
 

@@ -29,29 +29,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import ar.edu.unlam.organizador.entidades.Grupo
-import ar.edu.unlam.organizador.entidades.Tarea
-import ar.edu.unlam.organizador.repositorios.GrupoRepositorio
-import ar.edu.unlam.organizador.repositorios.TareaRepositorio
+import ar.edu.unlam.organizador.database.entidades.Grupo
+import ar.edu.unlam.organizador.database.entidades.Tarea
+import ar.edu.unlam.organizador.database.repositorios.GrupoRepositorio
+import ar.edu.unlam.organizador.database.repositorios.TareaRepositorio
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 
 class GrupoActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val bundle = intent.extras
+        /*val bundle = intent.extras
         val nombre: String? = bundle?.getString("nombre")
-        val grupo: Grupo = GrupoRepositorio.buscarGrupo(nombre!!)
+        val grupo: Grupo = GrupoRepositorio.buscarGrupo(nombre!!)*/
 
         setContent {
             OrganizadorTheme {
-                Base(this, grupo, nombre)
+               // Base(this, grupo, nombre)
             }
         }
     }
@@ -67,7 +63,7 @@ class GrupoActivity : ComponentActivity() {
                 Menu(context)
                 NombreDeGrupo(grupo)
                 Spacer(modifier = Modifier.size(5.dp))
-                BotonAgregar(grupo = grupo)
+                /*BotonAgregar(grupo = grupo)
                 Spacer(modifier = Modifier.size(5.dp))
                 TareasPendientes(
                     datos = TareaRepositorio.obtenerListaDeTareasPendientesPorGrupo(
@@ -78,7 +74,7 @@ class GrupoActivity : ComponentActivity() {
                     datos = TareaRepositorio.obtenerListaDeTareasRealizadasPorGrupo(
                         nombre
                     )
-                )
+                )*/
                 Salir()
             }
         }

@@ -24,25 +24,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import ar.edu.unlam.organizador.entidades.Grupo
-import ar.edu.unlam.organizador.repositorios.GrupoRepositorio
-import ar.edu.unlam.organizador.repositorios.TareaRepositorio
-import ar.edu.unlam.organizador.repositorios.UsuarioRepositorio
+import ar.edu.unlam.organizador.database.entidades.Grupo
+import ar.edu.unlam.organizador.database.repositorios.GrupoRepositorio
+import ar.edu.unlam.organizador.database.repositorios.UsuarioRepositorio
 import ar.edu.unlam.organizador.ui.componentes.AltaUsuarioForm
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.viewmodels.MainActivityViewModel
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.annotations.Nullable
 
 class MainActivity : ComponentActivity() {
     private val mainViewModel by viewModels<MainActivityViewModel>()
@@ -56,8 +48,7 @@ class MainActivity : ComponentActivity() {
         startActivity(intent) //Reinicializa para ver la vista principal.
     }
 
-    var database = FirebaseDatabase.getInstance().reference.child("Grupos")
-    var grupos = mutableStateListOf<Grupo?>()
+    val repository = GrupoRepositorio
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,22 +84,20 @@ class MainActivity : ComponentActivity() {
         ) {
             Column {
                 Menu(context)
-
-                MostrarGrupos(grupos)
+                //MostrarGrupos(repository.listenGetAll({grupo -> agregar(grupo)}, {grupo -> eliminar(grupo)}))
                 Botones()
             }
         }
     }
 
-
     @Composable
-    private fun MostrarGrupos(grupos: SnapshotStateList<Grupo?>) {
+    private fun MostrarGrupos(grupos: MutableList<Grupo>) {
         LazyColumn(
             contentPadding = PaddingValues(10.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             items(grupos) { grupo ->
-                FilaDeGrupo(grupo!!)
+                FilaDeGrupo(grupo)
             }
         }
     }
@@ -125,7 +114,7 @@ class MainActivity : ComponentActivity() {
         ) {
             Column {
                 Text(text = grupo.nombre)
-                Text(
+                /*Text(
                     text = "Pendientes: ${
                         TareaRepositorio.obtenerListaDeTareasPendientesPorGrupo(
                             grupo.nombre
@@ -138,7 +127,7 @@ class MainActivity : ComponentActivity() {
                             grupo.nombre
                         ).size
                     }"
-                )
+                )*/
             }
         }
     }

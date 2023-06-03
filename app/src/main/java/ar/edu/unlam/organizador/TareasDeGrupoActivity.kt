@@ -27,10 +27,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import ar.edu.unlam.organizador.entidades.Grupo
-import ar.edu.unlam.organizador.entidades.Tarea
-import ar.edu.unlam.organizador.repositorios.GrupoRepositorio
-import ar.edu.unlam.organizador.repositorios.TareaRepositorio
+import ar.edu.unlam.organizador.database.entidades.Grupo
+import ar.edu.unlam.organizador.database.entidades.Tarea
+import ar.edu.unlam.organizador.database.repositorios.GrupoRepositorio
+import ar.edu.unlam.organizador.database.repositorios.TareaRepositorio
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 
@@ -38,7 +38,7 @@ class TareasDeGrupoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val bundle = intent.extras
+        /*val bundle = intent.extras
         val nombre: String? = bundle?.getString("nombre")
         val grupo: Grupo = GrupoRepositorio.buscarGrupo(nombre!!)
 
@@ -179,5 +179,6 @@ class TareasDeGrupoActivity : ComponentActivity() {
             putExtra("nombre", nombre)
         }
         startActivity(intent)
+    }*/
     }
 }

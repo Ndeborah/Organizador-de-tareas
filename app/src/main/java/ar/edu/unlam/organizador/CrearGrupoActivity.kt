@@ -26,13 +26,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import ar.edu.unlam.organizador.entidades.Grupo
-import ar.edu.unlam.organizador.repositorios.GrupoRepositorio
+import ar.edu.unlam.organizador.database.entidades.Grupo
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 
 class CrearGrupoActivity : ComponentActivity() {
     private lateinit var nuevoGrupo: Grupo
@@ -88,7 +84,7 @@ class CrearGrupoActivity : ComponentActivity() {
         Spacer(modifier = Modifier.size(100.dp))
         Column() {
             Button(onClick = {
-                grupoId++
+                /*grupoId++
                 nuevoGrupo = Grupo(nombre, contrasenia)
                 database.push().setValue(nuevoGrupo)
 
@@ -101,7 +97,7 @@ class CrearGrupoActivity : ComponentActivity() {
                 //nuevoGrupo = Grupo(nombre,  "")*/
 
                 //GrupoRepositorio.agregar(nuevoGrupo)
-
+                */
 
                 irAGrupos()
                 finish()

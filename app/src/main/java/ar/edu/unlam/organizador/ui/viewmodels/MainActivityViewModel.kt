@@ -2,8 +2,8 @@ package ar.edu.unlam.organizador.ui.viewmodels
 
 import android.telephony.PhoneNumberUtils.isGlobalPhoneNumber
 import androidx.lifecycle.ViewModel
-import ar.edu.unlam.organizador.entidades.Usuario
-import ar.edu.unlam.organizador.repositorios.UsuarioRepositorio
+import ar.edu.unlam.organizador.database.entidades.Usuario
+import ar.edu.unlam.organizador.database.repositorios.UsuarioRepositorio
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

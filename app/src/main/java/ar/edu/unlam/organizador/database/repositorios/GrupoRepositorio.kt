@@ -4,13 +4,16 @@ import ar.edu.unlam.organizador.database.entidades.Grupo
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 
 object GrupoRepositorio {
 
     private val db = Firebase.database.reference
     private const val grupoReference = "grupo"
+    val listaGrupos = mutableListOf<Grupo>()
 
     fun get(id: String, callback: (Grupo) -> Unit) {
         db.child(grupoReference).child(id).get().addOnSuccessListener { item ->
@@ -41,6 +44,27 @@ object GrupoRepositorio {
 
         }
         db.child(grupoReference).addChildEventListener(childEventListener)
+    }
+
+    fun listaGrupos(): MutableList<Grupo> {
+        val listener = object: ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                dataSnapshot.children.forEach { child ->
+                    val grupo: Grupo? = Grupo(
+                        child.child("id").getValue<String>()!!,
+                        child.child("nombre").getValue<String>()!!,
+                        child.child("password").getValue<String>()!!,
+                    )
+                    grupo?.let {
+                        listaGrupos.add(it)
+                    }
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+            }
+        }
+        db.child(grupoReference).addValueEventListener(listener)
+        return listaGrupos
     }
 
     fun save(grupo: Grupo) {

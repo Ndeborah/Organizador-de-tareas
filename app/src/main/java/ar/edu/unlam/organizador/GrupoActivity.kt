@@ -41,19 +41,19 @@ class GrupoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        /*val bundle = intent.extras
+        val bundle = intent.extras
         val nombre: String? = bundle?.getString("nombre")
-        val grupo: Grupo = GrupoRepositorio.buscarGrupo(nombre!!)*/
+        //val grupo: Grupo = GrupoRepositorio.buscarGrupo(nombre!!)
 
         setContent {
             OrganizadorTheme {
-               // Base(this, grupo, nombre)
+                Base(this, nombre!!)
             }
         }
     }
 
     @Composable
-    private fun Base(context: Context, grupo: Grupo, nombre: String) {
+    private fun Base(context: Context, nombre: String) {
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -61,7 +61,7 @@ class GrupoActivity : ComponentActivity() {
         ) {
             Column {
                 Menu(context)
-                NombreDeGrupo(grupo)
+                NombreDeGrupo(nombre)
                 Spacer(modifier = Modifier.size(5.dp))
                 /*BotonAgregar(grupo = grupo)
                 Spacer(modifier = Modifier.size(5.dp))
@@ -115,8 +115,8 @@ class GrupoActivity : ComponentActivity() {
                 Text(text = item.nombre)
                 FloatingActionButton(
                     onClick = {
-                        TareaRepositorio.agregarTareaRealizada(item)
-                        TareaRepositorio.tareasPendientes.remove(item)
+                        //TareaRepositorio.agregarTareaRealizada(item)
+                        //TareaRepositorio.tareasPendientes.remove(item)
                     },
                     modifier = Modifier.size(40.dp)
                 ) {
@@ -182,7 +182,7 @@ class GrupoActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun NombreDeGrupo(grupo: Grupo) {
+    private fun NombreDeGrupo(nombre: String) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -190,7 +190,7 @@ class GrupoActivity : ComponentActivity() {
                 .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
             Column {
-                Text(text = grupo.nombre)
+                Text(text = nombre)
             }
         }
     }

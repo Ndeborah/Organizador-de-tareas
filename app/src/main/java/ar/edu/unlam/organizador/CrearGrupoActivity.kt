@@ -33,7 +33,7 @@ import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 class CrearGrupoActivity : ComponentActivity() {
     private lateinit var nuevoGrupo: Grupo
     var nombre: String = ""
-    var contrasenia = ""
+    var password = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,10 +82,8 @@ class CrearGrupoActivity : ComponentActivity() {
         Spacer(modifier = Modifier.size(100.dp))
         Column() {
             Button(onClick = {
-                nuevoGrupo = Grupo(nombre= nombre, contrasenia = contrasenia)
+                nuevoGrupo = Grupo(nombre= nombre, password = password)
                 GrupoRepositorio.save(nuevoGrupo)
-
-
                 /*val grupoMap = HashMap<String, String>()
                 grupoMap["Nombre"] = nombre
                 grupoMap["Password"] = contrasenia

@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
         startActivity(intent) //Reinicializa para ver la vista principal.
     }
 
-    val repository = GrupoRepositorio
+    private val repository = GrupoRepositorio
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,7 +84,7 @@ class MainActivity : ComponentActivity() {
         ) {
             Column {
                 Menu(context)
-                //MostrarGrupos(repository.listenGetAll({grupo -> agregar(grupo)}, {grupo -> eliminar(grupo)}))
+                MostrarGrupos(repository.listaGrupos())
                 Botones()
             }
         }

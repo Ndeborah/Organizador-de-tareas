@@ -27,15 +27,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.organizador.database.entidades.Grupo
+import ar.edu.unlam.organizador.database.repositorios.GrupoRepositorio
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
-import com.google.firebase.database.FirebaseDatabase
 
 class CrearGrupoActivity : ComponentActivity() {
     private lateinit var nuevoGrupo: Grupo
     var nombre: String = ""
     var contrasenia = ""
-    var grupoId = 0
-    var database = FirebaseDatabase.getInstance().reference.child("Grupos")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,9 +82,8 @@ class CrearGrupoActivity : ComponentActivity() {
         Spacer(modifier = Modifier.size(100.dp))
         Column() {
             Button(onClick = {
-                /*grupoId++
-                nuevoGrupo = Grupo(nombre, contrasenia)
-                database.push().setValue(nuevoGrupo)
+                nuevoGrupo = Grupo(nombre= nombre, contrasenia = contrasenia)
+                GrupoRepositorio.save(nuevoGrupo)
 
 
                 /*val grupoMap = HashMap<String, String>()
@@ -97,9 +94,9 @@ class CrearGrupoActivity : ComponentActivity() {
                 //nuevoGrupo = Grupo(nombre,  "")*/
 
                 //GrupoRepositorio.agregar(nuevoGrupo)
-                */
 
-                irAGrupos()
+
+                irAMain()
                 finish()
             })
             {
@@ -125,7 +122,7 @@ class CrearGrupoActivity : ComponentActivity() {
         nombre = text.text
     }
 
-    private fun irAGrupos() {
+    private fun irAMain() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }

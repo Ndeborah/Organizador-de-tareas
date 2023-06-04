@@ -6,7 +6,7 @@ object TareaRepositorio {
     val tareasPendientes = mutableListOf<Tarea>()
     val tareasRealizadas = mutableListOf<Tarea>()
 
-    init {
+    /*init {
         agregarTareaPendiente(Tarea("Tarea 1", "Grupo 1"))
         agregarTareaPendiente(Tarea("Tarea 2", "Grupo 1"))
         agregarTareaPendiente(Tarea("Tarea 3", "Grupo 1"))
@@ -14,7 +14,7 @@ object TareaRepositorio {
         agregarTareaPendiente(Tarea("Tarea 1", "Grupo 3"))
         agregarTareaRealizada(Tarea("Tarea 3", "Grupo 2"))
         agregarTareaRealizada(Tarea("Tarea 2", "Grupo 3"))
-    }
+    }*/
 
     fun listarTareasPendietes(): MutableList<Tarea> {
         return tareasPendientes

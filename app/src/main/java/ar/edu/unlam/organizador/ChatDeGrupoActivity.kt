@@ -26,13 +26,13 @@ class ChatDeGrupoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val bundle = intent.extras
+        /*val bundle = intent.extras
         val nombre: String? = bundle?.getString("nombre")
-        val grupo: Grupo = GrupoRepositorio.buscarGrupo(nombre!!)
+        val grupo: Grupo = GrupoRepositorio.buscarGrupo(nombre!!)*/
 
         setContent {
             OrganizadorTheme {
-                Base(this, grupo, nombre)
+                //Base(this, grupo, nombre)
             }
         }
     }

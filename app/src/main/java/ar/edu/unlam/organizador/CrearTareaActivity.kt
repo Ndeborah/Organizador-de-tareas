@@ -39,13 +39,13 @@ class CrearTareaActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val bundle = intent.extras
+       /* val bundle = intent.extras
         val nombre: String? = bundle?.getString("nombre")
-        val grupo: Grupo = GrupoRepositorio.buscarGrupo(nombre!!)
+        val grupo: Grupo = GrupoRepositorio.buscarGrupo(nombre!!)*/
 
         setContent {
             OrganizadorTheme {
-                Base(grupo)
+              //  Base(grupo)
             }
         }
     }
@@ -58,12 +58,12 @@ class CrearTareaActivity : ComponentActivity() {
             color = Color.Black
         ) {
             Column {
-                CrearTarea(grupo = grupo)
+                //CrearTarea(grupo = grupo)
             }
         }
     }
 
-    @Composable
+    /*@Composable
     private fun CrearTarea(grupo: Grupo) {
         Box(
             modifier = Modifier
@@ -126,5 +126,5 @@ class CrearTareaActivity : ComponentActivity() {
             putExtra("nombre", grupo.nombre)
         }
         startActivity(intent)
-    }
+    }*/
 }

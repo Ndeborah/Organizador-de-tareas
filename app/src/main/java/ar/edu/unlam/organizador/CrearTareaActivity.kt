@@ -35,6 +35,7 @@ import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 class CrearTareaActivity : ComponentActivity() {
     private lateinit var nuevaTarea: Tarea
     var nombreTarea: String = ""
+    val grupo = Grupo()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +64,7 @@ class CrearTareaActivity : ComponentActivity() {
         }
     }
 
-    /*@Composable
+    @Composable
     private fun CrearTarea(grupo: Grupo) {
         Box(
             modifier = Modifier
@@ -90,8 +91,9 @@ class CrearTareaActivity : ComponentActivity() {
         Column() {
             Button(onClick = {
                 if (nombreTarea != "") {
-                    nuevaTarea = Tarea(nombreTarea, grupo.nombre)
-                    TareaRepositorio.agregarTareaPendiente(nuevaTarea)
+                    nuevaTarea = Tarea(nombre = nombreTarea)
+                    TareaRepositorio.save(nuevaTarea)
+                    //TareaRepositorio.agregarTareaPendiente(nuevaTarea)
                     irAGrupo(grupo)
                     finish()
                 }
@@ -126,5 +128,5 @@ class CrearTareaActivity : ComponentActivity() {
             putExtra("nombre", grupo.nombre)
         }
         startActivity(intent)
-    }*/
+    }
 }

@@ -4,6 +4,6 @@ import java.util.UUID
 
 data class Grupo (
   var id: String = UUID.randomUUID().toString(),
-  val nombre: String = "",
+  var nombre: String = "",
   var contrasenia: String = ""
 )

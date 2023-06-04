@@ -1,8 +1,10 @@
 package ar.edu.unlam.organizador.database.entidades
 
-data class Tarea(
-    var id: String,
-    var nombre: String,
-    var grupo: String,
-    var realizada: Boolean
+import java.util.UUID
+
+data class Tarea (
+    var id: String = UUID.randomUUID().toString(),
+    var nombre: String = "",
+    var grupo: String = "",
+    var realizada: Boolean = false
 )

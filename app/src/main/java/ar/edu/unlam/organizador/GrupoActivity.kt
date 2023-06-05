@@ -43,7 +43,6 @@ class GrupoActivity : ComponentActivity() {
 
         val bundle = intent.extras
         val nombre: String? = bundle?.getString("nombre")
-        //val grupo: Grupo = GrupoRepositorio.buscarGrupo(nombre!!)
 
         setContent {
             OrganizadorTheme {
@@ -63,7 +62,7 @@ class GrupoActivity : ComponentActivity() {
                 Menu(context)
                 NombreDeGrupo(nombre)
                 Spacer(modifier = Modifier.size(5.dp))
-                /*BotonAgregar(grupo = grupo)
+                BotonAgregar(nombre)
                 Spacer(modifier = Modifier.size(5.dp))
                 TareasPendientes(
                     datos = TareaRepositorio.obtenerListaDeTareasPendientesPorGrupo(
@@ -74,7 +73,7 @@ class GrupoActivity : ComponentActivity() {
                     datos = TareaRepositorio.obtenerListaDeTareasRealizadasPorGrupo(
                         nombre
                     )
-                )*/
+                )
                 Salir()
             }
         }
@@ -115,8 +114,8 @@ class GrupoActivity : ComponentActivity() {
                 Text(text = item.nombre)
                 FloatingActionButton(
                     onClick = {
-                        //TareaRepositorio.agregarTareaRealizada(item)
-                        //TareaRepositorio.tareasPendientes.remove(item)
+                        TareaRepositorio.save(item)
+                        TareaRepositorio.tareasPendientes.remove(item)
                     },
                     modifier = Modifier.size(40.dp)
                 ) {
@@ -151,9 +150,9 @@ class GrupoActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun BotonAgregar(grupo: Grupo) {
+    private fun BotonAgregar(nombre: String) {
         FloatingActionButton(
-            onClick = { irAAgregar(grupo.nombre) },
+            onClick = { irAAgregar(nombre) },
             modifier = Modifier.size(40.dp)
         ) {
             Icon(imageVector = Icons.Default.Edit, contentDescription = "Agregar Tarea")

@@ -15,6 +15,10 @@ object GrupoRepositorio {
     private const val grupoReference = "grupo"
     val listaGrupos = mutableListOf<Grupo>()
 
+    init {
+        listaGrupos()
+    }
+
     fun get(id: String, callback: (Grupo) -> Unit) {
         db.child(grupoReference).child(id).get().addOnSuccessListener { item ->
             item.getValue(Grupo::class.java)?.let {
@@ -56,7 +60,9 @@ object GrupoRepositorio {
                         child.child("password").getValue<String>()!!,
                     )
                     grupo?.let {
-                        listaGrupos.add(it)
+                        if(!existe(it.nombre)) {
+                            listaGrupos.add(it)
+                        }
                     }
                 }
             }
@@ -71,32 +77,17 @@ object GrupoRepositorio {
         db.child(grupoReference).child(grupo.id).setValue(grupo)
     }
 
-    /*val grupos = mutableListOf<Grupo>()
-
-    init {
-        agregar(Grupo("Grupo 1", ""))
-        agregar(Grupo("Grupo 2", ""))
-        agregar(Grupo("Grupo 3", ""))
-    }
-
-    fun agregar(grupo: Grupo) {
-        if (!existe(grupo.nombre)) {
-            grupos.add(grupo)
-        }
-    }
-
     fun existe(nombre: String): Boolean {
-        return grupos.any { grupo: Grupo -> grupo.nombre == nombre }
+        return listaGrupos.any { grupo: Grupo -> grupo.nombre == nombre }
     }
 
-    fun buscarGrupo(nombre: String): Grupo {
+    /*fun buscarGrupo(nombre: String): Grupo {
         var grupoEncontrado = Grupo()
-        for (elemento in grupos) {
+        for (elemento in listaGrupos) {
             if (elemento.nombre == nombre) {
                 grupoEncontrado = elemento
             }
         }
-
         return grupoEncontrado
     }*/
 }

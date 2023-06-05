@@ -84,16 +84,6 @@ class CrearGrupoActivity : ComponentActivity() {
             Button(onClick = {
                 nuevoGrupo = Grupo(nombre= nombre, password = password)
                 GrupoRepositorio.save(nuevoGrupo)
-                /*val grupoMap = HashMap<String, String>()
-                grupoMap["Nombre"] = nombre
-                grupoMap["Password"] = contrasenia
-                database.push().setValue(grupoMap)
-                //database.child(grupoId.toString()).setValue(nombre)
-                //nuevoGrupo = Grupo(nombre,  "")*/
-
-                //GrupoRepositorio.agregar(nuevoGrupo)
-
-
                 irAMain()
                 finish()
             })

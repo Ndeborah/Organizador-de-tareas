@@ -28,7 +28,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.organizador.database.entidades.Grupo
 import ar.edu.unlam.organizador.database.entidades.Tarea
-import ar.edu.unlam.organizador.database.repositorios.GrupoRepositorio
 import ar.edu.unlam.organizador.database.repositorios.TareaRepositorio
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 
@@ -40,32 +39,31 @@ class CrearTareaActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-       /* val bundle = intent.extras
+        val bundle = intent.extras
         val nombre: String? = bundle?.getString("nombre")
-        val grupo: Grupo = GrupoRepositorio.buscarGrupo(nombre!!)*/
 
         setContent {
             OrganizadorTheme {
-              //  Base(grupo)
+                Base(nombre!!)
             }
         }
     }
 
     @Composable
-    private fun Base(grupo: Grupo) {
+    private fun Base(nombre: String) {
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = Color.Black
         ) {
             Column {
-                //CrearTarea(grupo = grupo)
+                CrearTarea(nombre)
             }
         }
     }
 
     @Composable
-    private fun CrearTarea(grupo: Grupo) {
+    private fun CrearTarea(nombre: String) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -93,8 +91,7 @@ class CrearTareaActivity : ComponentActivity() {
                 if (nombreTarea != "") {
                     nuevaTarea = Tarea(nombre = nombreTarea)
                     TareaRepositorio.save(nuevaTarea)
-                    //TareaRepositorio.agregarTareaPendiente(nuevaTarea)
-                    irAGrupo(grupo)
+                    irAGrupo(nombre)
                     finish()
                 }
 
@@ -123,9 +120,9 @@ class CrearTareaActivity : ComponentActivity() {
         }
     }
 
-    private fun irAGrupo(grupo: Grupo) {
+    private fun irAGrupo(nombre: String) {
         val intent = Intent(this, GrupoActivity::class.java).apply {
-            putExtra("nombre", grupo.nombre)
+            putExtra("nombre", nombre)
         }
         startActivity(intent)
     }

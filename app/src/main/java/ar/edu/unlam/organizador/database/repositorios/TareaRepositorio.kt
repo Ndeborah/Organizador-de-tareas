@@ -1,17 +1,25 @@
 package ar.edu.unlam.organizador.database.repositorios
 
-import ar.edu.unlam.organizador.database.entidades.Grupo
 import ar.edu.unlam.organizador.database.entidades.Tarea
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 
 object TareaRepositorio {
 
     private val db = Firebase.database.reference
     private const val tareaReference = "tarea"
+    val tareasPendientes = mutableListOf<Tarea>()
+    val tareasRealizadas = mutableListOf<Tarea>()
+
+    init {
+        listaTareasPendientes()
+        listaTareasRealizadas()
+    }
 
     fun get(id: String, callback: (Tarea) -> Unit) {
         db.child(tareaReference).child(id).get().addOnSuccessListener { item ->
@@ -44,44 +52,66 @@ object TareaRepositorio {
         db.child(tareaReference).addChildEventListener(childEventListener)
     }
 
+    fun listaTareasPendientes(): MutableList<Tarea> {
+        val listener = object: ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                dataSnapshot.children.forEach { child ->
+                    val tarea: Tarea? = Tarea(
+                        child.child("id").getValue<String>()!!,
+                        child.child("nombre").getValue<String>()!!,
+                        child.child("grupo").getValue<String>()!!,
+                        child.child("realizada").getValue<Boolean>()!!
+                    )
+                    tarea?.let {
+                        if(!existe(it.nombre) && !it.realizada) {
+                            tareasPendientes.add(it)
+                        }
+                    }
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+            }
+        }
+        db.child(tareaReference).addValueEventListener(listener)
+        return tareasPendientes
+    }
+
+    fun listaTareasRealizadas(): MutableList<Tarea> {
+        val listener = object: ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                dataSnapshot.children.forEach { child ->
+                    val tarea: Tarea? = Tarea(
+                        child.child("id").getValue<String>()!!,
+                        child.child("nombre").getValue<String>()!!,
+                        child.child("grupo").getValue<String>()!!,
+                        child.child("realizada").getValue<Boolean>()!!
+                    )
+                    tarea?.let {
+                        if(!existe(it.nombre) && it.realizada) {
+                            tareasPendientes.add(it)
+                        }
+                    }
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+            }
+        }
+        db.child(tareaReference).addValueEventListener(listener)
+        return tareasRealizadas
+    }
+
+    fun existe(nombre: String): Boolean {
+        return tareasPendientes.any { tarea: Tarea -> tarea.nombre == nombre }
+    }
+
     fun save(tarea: Tarea) {
         db.child(tareaReference).child(tarea.id).setValue(tarea)
     }
 
-
-
-    /*val tareasPendientes = mutableListOf<Tarea>()
-    val tareasRealizadas = mutableListOf<Tarea>()
-
-    /*init {
-        agregarTareaPendiente(Tarea("Tarea 1", "Grupo 1"))
-        agregarTareaPendiente(Tarea("Tarea 2", "Grupo 1"))
-        agregarTareaPendiente(Tarea("Tarea 3", "Grupo 1"))
-        agregarTareaPendiente(Tarea("Tarea 1", "Grupo 2"))
-        agregarTareaPendiente(Tarea("Tarea 1", "Grupo 3"))
-        agregarTareaRealizada(Tarea("Tarea 3", "Grupo 2"))
-        agregarTareaRealizada(Tarea("Tarea 2", "Grupo 3"))
-    }*/
-
-    fun listarTareasPendietes(): MutableList<Tarea> {
-        return tareasPendientes
-    }
-
-    fun listarTareasRealizadas(): MutableList<Tarea> {
-        return tareasRealizadas
-    }
-
-    fun agregarTareaPendiente(tarea: Tarea) {
-        tareasPendientes.add(tarea)
-    }
-
-    fun agregarTareaRealizada(tarea: Tarea) {
-        tareasRealizadas.add(tarea)
-    }
-
     fun obtenerListaDeTareasRealizadasPorGrupo(nombre: String): MutableList<Tarea> {
+        listaTareasRealizadas()
         val tareasPorUsuario = mutableListOf<Tarea>()
-        for (tarea in tareasRealizadas) {
+        for (tarea in listaTareasRealizadas()) {
             if (tarea.grupo == nombre) {
                 tareasPorUsuario.add(tarea)
             }
@@ -90,12 +120,13 @@ object TareaRepositorio {
     }
 
     fun obtenerListaDeTareasPendientesPorGrupo(nombre: String): MutableList<Tarea> {
+        listaTareasPendientes()
         val tareasPorUsuario = mutableListOf<Tarea>()
-        for (tarea in tareasPendientes) {
+        for (tarea in listaTareasPendientes()) {
             if (tarea.grupo == nombre) {
                 tareasPorUsuario.add(tarea)
             }
         }
         return tareasPorUsuario
-    }*/
+    }
 }

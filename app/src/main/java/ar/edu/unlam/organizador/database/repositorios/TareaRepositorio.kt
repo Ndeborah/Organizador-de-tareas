@@ -1,6 +1,5 @@
 package ar.edu.unlam.organizador.database.repositorios
 
-import ar.edu.unlam.organizador.GrupoActivity
 import ar.edu.unlam.organizador.database.entidades.Tarea
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot

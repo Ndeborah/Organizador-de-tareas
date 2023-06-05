@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.organizador.database.entidades.Grupo
 import ar.edu.unlam.organizador.database.repositorios.GrupoRepositorio
+import ar.edu.unlam.organizador.database.repositorios.TareaRepositorio
 import ar.edu.unlam.organizador.database.repositorios.UsuarioRepositorio
 import ar.edu.unlam.organizador.ui.componentes.AltaUsuarioForm
 import ar.edu.unlam.organizador.ui.componentes.Menu
@@ -114,7 +115,7 @@ class MainActivity : ComponentActivity() {
         ) {
             Column {
                 Text(text = grupo.nombre)
-                /*Text(
+                Text(
                     text = "Pendientes: ${
                         TareaRepositorio.obtenerListaDeTareasPendientesPorGrupo(
                             grupo.nombre
@@ -127,7 +128,7 @@ class MainActivity : ComponentActivity() {
                             grupo.nombre
                         ).size
                     }"
-                )*/
+                )
             }
         }
     }

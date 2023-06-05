@@ -16,8 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import ar.edu.unlam.organizador.database.entidades.Grupo
-import ar.edu.unlam.organizador.database.repositorios.GrupoRepositorio
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 
@@ -26,19 +24,18 @@ class ChatDeGrupoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        /*val bundle = intent.extras
+        val bundle = intent.extras
         val nombre: String? = bundle?.getString("nombre")
-        val grupo: Grupo = GrupoRepositorio.buscarGrupo(nombre!!)*/
 
         setContent {
             OrganizadorTheme {
-                //Base(this, grupo, nombre)
+                Base(this, nombre!!)
             }
         }
     }
 
     @Composable
-    private fun Base(context: Context, grupo: Grupo, nombre: String) {
+    private fun Base(context: Context, nombre: String) {
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -46,13 +43,13 @@ class ChatDeGrupoActivity : ComponentActivity() {
         ) {
             Column {
                 Menu(context)
-                NombreDeGrupo(grupo)
+                NombreDeGrupo(nombre)
             }
         }
     }
 
     @Composable
-    private fun NombreDeGrupo(grupo: Grupo) {
+    private fun NombreDeGrupo(nombre: String) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -60,7 +57,7 @@ class ChatDeGrupoActivity : ComponentActivity() {
                 .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
             Column() {
-                Text(text = grupo.nombre)
+                Text(text = nombre)
             }
         }
     }

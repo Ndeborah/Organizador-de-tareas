@@ -29,9 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import ar.edu.unlam.organizador.database.entidades.Grupo
 import ar.edu.unlam.organizador.database.entidades.Tarea
-import ar.edu.unlam.organizador.database.repositorios.GrupoRepositorio
 import ar.edu.unlam.organizador.database.repositorios.TareaRepositorio
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
@@ -46,6 +44,8 @@ class GrupoActivity : ComponentActivity() {
 
         setContent {
             OrganizadorTheme {
+                TareaRepositorio.listaTareasPendientes()
+                TareaRepositorio.listaTareasRealizadas()
                 Base(this, nombre!!)
             }
         }
@@ -114,8 +114,8 @@ class GrupoActivity : ComponentActivity() {
                 Text(text = item.nombre)
                 FloatingActionButton(
                     onClick = {
-                        TareaRepositorio.save(item)
-                        TareaRepositorio.tareasPendientes.remove(item)
+                        item.realizada = true
+                        TareaRepositorio.listaTareasRealizadas()
                     },
                     modifier = Modifier.size(40.dp)
                 ) {

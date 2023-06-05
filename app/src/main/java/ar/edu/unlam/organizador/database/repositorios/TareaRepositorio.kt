@@ -1,5 +1,6 @@
 package ar.edu.unlam.organizador.database.repositorios
 
+import ar.edu.unlam.organizador.GrupoActivity
 import ar.edu.unlam.organizador.database.entidades.Tarea
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -56,13 +57,13 @@ object TareaRepositorio {
         val listener = object: ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 dataSnapshot.children.forEach { child ->
-                    val tarea: Tarea? = Tarea(
+                    val tarea = Tarea(
                         child.child("id").getValue<String>()!!,
                         child.child("nombre").getValue<String>()!!,
                         child.child("grupo").getValue<String>()!!,
                         child.child("realizada").getValue<Boolean>()!!
                     )
-                    tarea?.let {
+                    tarea.let {
                         if(!existe(it.nombre) && !it.realizada) {
                             tareasPendientes.add(it)
                         }
@@ -80,13 +81,13 @@ object TareaRepositorio {
         val listener = object: ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 dataSnapshot.children.forEach { child ->
-                    val tarea: Tarea? = Tarea(
+                    val tarea = Tarea(
                         child.child("id").getValue<String>()!!,
                         child.child("nombre").getValue<String>()!!,
                         child.child("grupo").getValue<String>()!!,
                         child.child("realizada").getValue<Boolean>()!!
                     )
-                    tarea?.let {
+                    tarea.let {
                         if(!existe(it.nombre) && it.realizada) {
                             tareasPendientes.add(it)
                         }

@@ -89,7 +89,7 @@ class CrearTareaActivity : ComponentActivity() {
         Column() {
             Button(onClick = {
                 if (nombreTarea != "") {
-                    nuevaTarea = Tarea(nombre = nombreTarea)
+                    nuevaTarea = Tarea(nombre = nombreTarea, grupo = nombre)
                     TareaRepositorio.save(nuevaTarea)
                     irAGrupo(nombre)
                     finish()

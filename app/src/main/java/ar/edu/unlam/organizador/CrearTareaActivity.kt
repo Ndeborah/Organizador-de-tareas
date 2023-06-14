@@ -26,45 +26,44 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import ar.edu.unlam.organizador.entidades.Grupo
-import ar.edu.unlam.organizador.entidades.Tarea
-import ar.edu.unlam.organizador.repositorios.GrupoRepositorio
-import ar.edu.unlam.organizador.repositorios.TareaRepositorio
+import ar.edu.unlam.organizador.database.entidades.Grupo
+import ar.edu.unlam.organizador.database.entidades.Tarea
+import ar.edu.unlam.organizador.database.repositorios.TareaRepositorio
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 
 class CrearTareaActivity : ComponentActivity() {
     private lateinit var nuevaTarea: Tarea
     var nombreTarea: String = ""
+    val grupo = Grupo()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val bundle = intent.extras
         val nombre: String? = bundle?.getString("nombre")
-        val grupo: Grupo = GrupoRepositorio.buscarGrupo(nombre!!)
 
         setContent {
             OrganizadorTheme {
-                Base(grupo)
+                Base(nombre!!)
             }
         }
     }
 
     @Composable
-    private fun Base(grupo: Grupo) {
+    private fun Base(nombre: String) {
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = Color.Black
         ) {
             Column {
-                CrearTarea(grupo = grupo)
+                CrearTarea(nombre)
             }
         }
     }
 
     @Composable
-    private fun CrearTarea(grupo: Grupo) {
+    private fun CrearTarea(nombre: String) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -90,9 +89,9 @@ class CrearTareaActivity : ComponentActivity() {
         Column() {
             Button(onClick = {
                 if (nombreTarea != "") {
-                    nuevaTarea = Tarea(nombreTarea, grupo.nombre)
-                    TareaRepositorio.agregarTareaPendiente(nuevaTarea)
-                    irATareas(grupo)
+                    nuevaTarea = Tarea(nombre = nombreTarea, grupo = nombre)
+                    TareaRepositorio.save(nuevaTarea)
+                    irAGrupo(nombre)
                     finish()
                 }
 
@@ -121,9 +120,9 @@ class CrearTareaActivity : ComponentActivity() {
         }
     }
 
-    private fun irATareas(grupo: Grupo) {
-        val intent = Intent(this, TareasDeGrupoActivity::class.java).apply {
-            putExtra("nombre", grupo.nombre)
+    private fun irAGrupo(nombre: String) {
+        val intent = Intent(this, GrupoActivity::class.java).apply {
+            putExtra("nombre", nombre)
         }
         startActivity(intent)
     }

@@ -26,16 +26,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import ar.edu.unlam.organizador.entidades.Grupo
-import ar.edu.unlam.organizador.repositorios.GrupoRepositorio
+import ar.edu.unlam.organizador.database.entidades.Grupo
+import ar.edu.unlam.organizador.database.repositorios.GrupoRepositorio
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
-import ar.edu.unlam.organizador.ui.theme.Pink80
-import ar.edu.unlam.organizador.ui.theme.Purple40
-import com.google.firebase.analytics.FirebaseAnalytics
 
 class CrearGrupoActivity : ComponentActivity() {
     private lateinit var nuevoGrupo: Grupo
     var nombre: String = ""
+    var password = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,9 +82,9 @@ class CrearGrupoActivity : ComponentActivity() {
         Spacer(modifier = Modifier.size(100.dp))
         Column() {
             Button(onClick = {
-                nuevoGrupo = Grupo(nombre, 0, "")
-                GrupoRepositorio.agregar(nuevoGrupo)
-                irAGrupos()
+                nuevoGrupo = Grupo(nombre= nombre, password = password)
+                GrupoRepositorio.save(nuevoGrupo)
+                irAMain()
                 finish()
             })
             {
@@ -112,7 +110,7 @@ class CrearGrupoActivity : ComponentActivity() {
         nombre = text.text
     }
 
-    private fun irAGrupos() {
+    private fun irAMain() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }

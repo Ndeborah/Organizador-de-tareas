@@ -70,6 +70,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-config-ktx' //configuracion remota
+    implementation 'com.google.firebase:firebase-database-ktx'
 
     // Implementaciones Test
     testImplementation 'junit:junit:4.13.2'

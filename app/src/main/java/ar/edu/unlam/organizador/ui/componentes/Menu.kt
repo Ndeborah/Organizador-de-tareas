@@ -40,21 +40,14 @@ fun Menu(context: Context) {
         Button(
             onClick = {
                 context.startActivity(chatDeGrupoActivityIntent)
+
             }
         ) {
             Text(text = "Chat")
         }
-
         Button(
             onClick = {
                 context.startActivity(mainActivity)
-            }
-        ) {
-            Text(text = "Tareas")
-        }
-        Button(
-            onClick = {
-                context.startActivity(grupoActivity)
             }
         ) {
             Text(text = "Grupos")

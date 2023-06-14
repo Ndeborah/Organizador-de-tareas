@@ -1,5 +1,6 @@
 package ar.edu.unlam.organizador
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -17,19 +18,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import ar.edu.unlam.organizador.entidades.Grupo
-import ar.edu.unlam.organizador.entidades.Tarea
-import ar.edu.unlam.organizador.repositorios.GrupoRepositorio
-import ar.edu.unlam.organizador.repositorios.TareaRepositorio
-import ar.edu.unlam.organizador.repositorios.UsuarioRepositorio
+import ar.edu.unlam.organizador.database.entidades.Grupo
+import ar.edu.unlam.organizador.database.repositorios.GrupoRepositorio
+import ar.edu.unlam.organizador.database.repositorios.TareaRepositorio
+import ar.edu.unlam.organizador.database.repositorios.UsuarioRepositorio
 import ar.edu.unlam.organizador.ui.componentes.AltaUsuarioForm
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
@@ -46,6 +48,8 @@ class MainActivity : ComponentActivity() {
         finish() //Finaliza luego de crear el usuario.
         startActivity(intent) //Reinicializa para ver la vista principal.
     }
+
+    private val repository = GrupoRepositorio
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +75,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @SuppressLint("UnrememberedMutableState")
     @Composable
     private fun Base(context: Context) {
         // A surface container using the 'background' color from the theme
@@ -80,7 +85,8 @@ class MainActivity : ComponentActivity() {
         ) {
             Column {
                 Menu(context)
-                MostrarGrupos(GrupoRepositorio.grupos)
+                MostrarGrupos(repository.listaGrupos())
+                Botones()
             }
         }
     }
@@ -127,42 +133,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @Composable
-    private fun MostrarTareas(tareas: MutableList<Tarea>) {
-        LazyColumn(
-            contentPadding = PaddingValues(10.dp),
-            verticalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            items(tareas) { tarea ->
-                FilaDeTarea(tarea)
-            }
-        }
-    }
-
-
-    @Composable
-    private fun FilaDeTarea(tarea: Tarea) {
-        onStop()
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-                .padding(horizontal = 10.dp, vertical = 10.dp)
-                .clickable(enabled = true, onClick = { nombreDeGrupo(tarea.nombre) })
-        ) {
-            Column {
-                Text(text = tarea.nombre)
-                Text(
-                    text = "Pendientes: ${
-                        TareaRepositorio.obtenerListaDeTareasPendientesPorGrupo(
-                            tarea.nombre
-                        ).size
-                    }"
-                )
-            }
-        }
-    }
-
     private fun nombreDeGrupo(nombre: String) {
         val intent = Intent(this, GrupoActivity::class.java).apply {
             putExtra("nombre", nombre)
@@ -170,4 +140,32 @@ class MainActivity : ComponentActivity() {
         startActivity(intent)
     }
 
+    @Composable
+    private fun Botones() {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.SpaceAround,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Button(onClick = {
+                irACrearGrupo()
+                onStop()
+            }) {
+                Text("Crear Grupo", color = Color.White)
+            }
+            Button(onClick = { /*TODO*/ }) {
+                Text("Unirse a un Grupo", color = Color.White)
+            }
+            //BOTÓN PRUEBA CRASHLYTICS
+
+            /*Button(onClick = {throw RuntimeException("Test Crash")}) {
+                Text(text = "Prueba")
+            }*/
+        }
+    }
+
+    private fun irACrearGrupo() {
+        val intent = Intent(this, CrearGrupoActivity::class.java)
+        startActivity(intent)
+    }
 }

@@ -9,21 +9,28 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import ar.edu.unlam.organizador.entidades.Grupo
-import ar.edu.unlam.organizador.repositorios.GrupoRepositorio
+import ar.edu.unlam.organizador.database.entidades.Tarea
+import ar.edu.unlam.organizador.database.repositorios.TareaRepositorio
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 
@@ -34,17 +41,18 @@ class GrupoActivity : ComponentActivity() {
 
         val bundle = intent.extras
         val nombre: String? = bundle?.getString("nombre")
-        val grupo: Grupo = GrupoRepositorio.buscarGrupo(nombre!!)
 
         setContent {
             OrganizadorTheme {
-                Base(this, grupo, nombre)
+                TareaRepositorio.listaTareasPendientes()
+                TareaRepositorio.listaTareasRealizadas()
+                Base(this, nombre!!)
             }
         }
     }
 
     @Composable
-    private fun Base(context: Context, grupo: Grupo, nombre: String) {
+    private fun Base(context: Context, nombre: String) {
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -52,45 +60,114 @@ class GrupoActivity : ComponentActivity() {
         ) {
             Column {
                 Menu(context)
-                NombreDeGrupo(grupo)
-                Participantes()
-                Botones()
+                NombreDeGrupo(nombre)
+                Spacer(modifier = Modifier.size(5.dp))
+                BotonAgregar(nombre)
+                Spacer(modifier = Modifier.size(5.dp))
+                TareasPendientes(
+                    datos = TareaRepositorio.obtenerListaDeTareasPendientesPorGrupo(
+                        nombre
+                    )
+                )
+                TareasRealizadas(
+                    datos = TareaRepositorio.obtenerListaDeTareasRealizadasPorGrupo(
+                        nombre
+                    )
+                )
                 Salir()
             }
         }
     }
 
     @Composable
-    private fun Botones() {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.SpaceAround,
-            horizontalAlignment = Alignment.CenterHorizontally
+    private fun TareasPendientes(datos: MutableList<Tarea>) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
-            Button(onClick = {
-                irACrearGrupo()
-                onStop()
-            }) {
-                Text("Crear Grupo", color = Color.White)
+            Column {
+                Text(text = "Pendientes")
             }
-            Button(onClick = { /*TODO*/ }) {
-                Text("Unirse a un Grupo", color = Color.White)
+        }
+        Spacer(modifier = Modifier.size(5.dp))
+        LazyColumn(
+            contentPadding = PaddingValues(10.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            items(datos) { item ->
+                ListItemRowPendiente(item)
             }
-            //BOTÓN PRUEBA CRASHLYTICS
-
-            /*Button(onClick = {throw RuntimeException("Test Crash")}) {
-                Text(text = "Prueba")
-            }*/
         }
     }
 
-    private fun irACrearGrupo() {
-        val intent = Intent(this, CrearGrupoActivity::class.java)
+    @Composable
+    private fun ListItemRowPendiente(item: Tarea) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .padding(horizontal = 10.dp, vertical = 10.dp)
+        ) {
+            Column {
+                Text(text = item.nombre)
+                FloatingActionButton(
+                    onClick = {
+                        item.realizada = true
+                        TareaRepositorio.listaTareasRealizadas()
+                    },
+                    modifier = Modifier.size(40.dp)
+                ) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = "Agregar Tarea")
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun TareasRealizadas(datos: MutableList<Tarea>) {
+        Spacer(modifier = Modifier.size(5.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .padding(horizontal = 10.dp, vertical = 10.dp)
+        ) {
+            Column {
+                Text(text = "Realizadas")
+            }
+        }
+        Spacer(modifier = Modifier.size(5.dp))
+        LazyColumn(
+            contentPadding = PaddingValues(10.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            items(datos) { item ->
+                ListItemRowRealizada(item)
+            }
+        }
+    }
+
+    @Composable
+    private fun BotonAgregar(nombre: String) {
+        FloatingActionButton(
+            onClick = { irAAgregar(nombre) },
+            modifier = Modifier.size(40.dp)
+        ) {
+            Icon(imageVector = Icons.Default.Edit, contentDescription = "Agregar Tarea")
+        }
+    }
+
+    private fun irAAgregar(nombre: String) {
+        val intent = Intent(this, CrearTareaActivity::class.java).apply {
+            putExtra("nombre", nombre)
+        }
         startActivity(intent)
     }
 
     @Composable
-    private fun NombreDeGrupo(grupo: Grupo) {
+    private fun ListItemRowRealizada(item: Tarea) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -98,14 +175,13 @@ class GrupoActivity : ComponentActivity() {
                 .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
             Column {
-                Text(text = grupo.nombre)
+                Text(text = item.nombre)
             }
         }
     }
 
     @Composable
-    private fun Participantes() {
-        Spacer(modifier = Modifier.size(5.dp))
+    private fun NombreDeGrupo(nombre: String) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -113,10 +189,9 @@ class GrupoActivity : ComponentActivity() {
                 .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
             Column {
-                Text(text = "Participantes")
+                Text(text = nombre)
             }
         }
-        Spacer(modifier = Modifier.size(5.dp))
     }
 
     @Composable

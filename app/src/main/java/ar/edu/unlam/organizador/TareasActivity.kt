@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -36,9 +37,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ar.edu.unlam.organizador.database.entidades.Tarea
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
@@ -131,35 +137,21 @@ class TareasActivity : ComponentActivity() {
         pendientes: MutableList<Tarea>,
         realizadas: MutableList<Tarea>,
         deleteAction: (String) -> Unit,
-        completeAction: (String) -> Unit
+        completeAction: (String) -> Unit,
+        modifier: Modifier = Modifier
     ) {
         LazyColumn(
-            contentPadding = PaddingValues(10.dp), verticalArrangement = Arrangement.spacedBy(5.dp)
+            verticalArrangement = Arrangement.spacedBy(1.dp),
+            modifier = modifier
         ) {
             item {
-                Box(
-                    modifier = Modifier
-                        .background(Color.White)
-                        .padding(horizontal = 10.dp, vertical = 10.dp)
-                ) {
-                    Column {
-                        Text(text = "Pendientes")
-                    }
-                }
+                Separador(text = "Pendientes")
             }
             items(pendientes) { item ->
                 TareaListItem(item, deleteAction, completeAction)
             }
             item {
-                Box(
-                    modifier = Modifier
-                        .background(Color.White)
-                        .padding(horizontal = 10.dp, vertical = 10.dp)
-                ) {
-                    Column {
-                        Text(text = "Realizadas")
-                    }
-                }
+                Separador(text = "Realizadas")
             }
             items(realizadas) { item ->
                 TareaListItem(item, deleteAction, completeAction)
@@ -168,19 +160,34 @@ class TareasActivity : ComponentActivity() {
     }
 
     @Composable
+    private fun Separador(text: String) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 10.dp, vertical = 5.dp)
+        ) {
+            Text(text = text, modifier = Modifier.align(Alignment.Center))
+        }
+    }
+
+    @Composable
     private fun TareaListItem(
         item: Tarea, deleteAction: (String) -> Unit, taskAction: (String) -> Unit
     ) {
-        Box(
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White)
                 .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
-            Column {
+            Column(modifier = Modifier.padding(10.dp)) {
                 Text(text = item.nombre)
-                Row {
-                    IconButton(onClick = { deleteAction(item.id) }) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    IconButton(
+                        onClick = { deleteAction(item.id) },
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.Delete, contentDescription = "Agregar Tarea"
                         )
@@ -198,12 +205,36 @@ class TareasActivity : ComponentActivity() {
 
     @Preview
     @Composable
+    private fun itemcito() {
+        TareasDeGrupo("Lele")
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Preview
+    @Composable
     private fun screen() {
-        TareaListItem(
-            item = Tarea(
-                id = "1", nombre = "Tarea", grupo = "Grupo 5", realizada = true
-            ), this::deleteTask, this::switchStatus
-        )
+        OrganizadorTheme {
+            Scaffold { paddingValues ->
+                ListaTareas(
+                    mutableListOf(
+                        Tarea(
+                            id = "1", nombre = "Tarea", grupo = "Grupo 5", realizada = false
+                        ),
+                        Tarea(
+                            id = "1", nombre = "Tarea", grupo = "Grupo 5", realizada = false
+                        )
+                    ),
+                    mutableListOf(
+                        Tarea(
+                            id = "1", nombre = "Realizada", grupo = "Grupo 5", realizada = true
+                        )
+                    ),
+                    this::deleteTask, this::switchStatus,
+                    modifier = Modifier.padding(paddingValues)
+                )
+            }
+
+        }
     }
 
     @Composable
@@ -224,14 +255,29 @@ class TareasActivity : ComponentActivity() {
 
     @Composable
     private fun TareasDeGrupo(nombre: String) {
+        val offset = Offset(5.0f, 10.0f)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White)
                 .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
-            Column {
-                Text(text = "Tareas de $nombre")
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .align(alignment = Alignment.Center)) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "Tareas de $nombre",
+                    style = TextStyle(
+                        fontSize = 24.sp,
+                        shadow = Shadow(
+                            color = Color.LightGray,
+                            offset = offset,
+                            blurRadius = 7f
+                        )
+                    ),
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }

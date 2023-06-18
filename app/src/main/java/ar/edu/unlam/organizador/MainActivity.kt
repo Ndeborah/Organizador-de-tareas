@@ -13,25 +13,24 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.Surface
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.organizador.database.entidades.Grupo
-import ar.edu.unlam.organizador.database.repositorios.GrupoRepositorio
-import ar.edu.unlam.organizador.database.repositorios.TareaRepositorio
-import ar.edu.unlam.organizador.database.repositorios.UsuarioRepositorio
 import ar.edu.unlam.organizador.ui.componentes.AltaUsuarioForm
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
@@ -49,15 +48,12 @@ class MainActivity : ComponentActivity() {
         startActivity(intent) //Reinicializa para ver la vista principal.
     }
 
-    private val repository = GrupoRepositorio
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val usuario = UsuarioRepositorio.traerUsuarioLocal()
         setContent {
             val mainUiState by mainViewModel.uiState.collectAsState()
             OrganizadorTheme {
-                if (usuario != null) {
+                if (mainViewModel.usuario != null) {
                     Base(this)
                 } else {
                     AltaUsuarioForm(
@@ -75,17 +71,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnrememberedMutableState")
     @Composable
     private fun Base(context: Context) {
         // A surface container using the 'background' color from the theme
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = Color.Black
-        ) {
-            Column {
-                Menu(context)
-                MostrarGrupos(repository.listaGrupos())
+        Scaffold(
+            topBar = { Menu(context) }
+        ) { paddingValues ->
+            Column(modifier = Modifier.padding(paddingValues)) {
+                MostrarGrupos(mainViewModel.grupos)
                 Botones()
             }
         }
@@ -93,18 +88,29 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun MostrarGrupos(grupos: MutableList<Grupo>) {
-        LazyColumn(
-            contentPadding = PaddingValues(10.dp),
-            verticalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            items(grupos) { grupo ->
-                FilaDeGrupo(grupo)
+        val tareas by mainViewModel.tareas.observeAsState(initial = emptyList())
+        if (tareas.isEmpty()) {
+            CircularProgressIndicator()
+        } else {
+            LazyColumn(
+                contentPadding = PaddingValues(10.dp),
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+
+                items(grupos) { grupo ->
+                    FilaDeGrupo(
+                        grupo,
+                        tareas.filter { it.grupo == grupo.nombre && !it.realizada }.size,
+                        tareas.filter { it.grupo == grupo.nombre && it.realizada }.size
+                    )
+                }
             }
         }
+
     }
 
     @Composable
-    private fun FilaDeGrupo(grupo: Grupo) {
+    private fun FilaDeGrupo(grupo: Grupo, totalPendientes: Int, totalRealizadas: Int) {
         onStop()
         Box(
             modifier = Modifier
@@ -116,25 +122,17 @@ class MainActivity : ComponentActivity() {
             Column {
                 Text(text = grupo.nombre)
                 Text(
-                    text = "Pendientes: ${
-                        TareaRepositorio.obtenerListaDeTareasPendientesPorGrupo(
-                            grupo.nombre
-                        ).size
-                    }"
+                    text = "Pendientes: $totalPendientes"
                 )
                 Text(
-                    text = "Realizadas: ${
-                        TareaRepositorio.obtenerListaDeTareasRealizadasPorGrupo(
-                            grupo.nombre
-                        ).size
-                    }"
+                    text = "Realizadas: $totalRealizadas"
                 )
             }
         }
     }
 
     private fun nombreDeGrupo(nombre: String) {
-        val intent = Intent(this, GrupoActivity::class.java).apply {
+        val intent = Intent(this, TareasActivity::class.java).apply {
             putExtra("nombre", nombre)
         }
         startActivity(intent)

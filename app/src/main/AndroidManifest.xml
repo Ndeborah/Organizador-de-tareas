@@ -23,7 +23,7 @@
             android:label="@string/title_activity_crear_tarea"
             android:theme="@style/Theme.Organizador" />
         <activity
-            android:name=".GrupoActivity"
+            android:name=".TareasActivity"
             android:exported="false"
             android:label="@string/title_activity_grupo"
             android:theme="@style/Theme.Organizador" />
@@ -38,7 +38,7 @@
             android:label="@string/title_activity_chat"
             android:theme="@style/Theme.Organizador" />
         <activity
-            android:name=".TareasDeGrupoActivity"
+            android:name=".GrupoActivity"
             android:exported="false"
             android:label="@string/title_activity_main2"
             android:theme="@style/Theme.Organizador" />

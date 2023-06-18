@@ -64,7 +64,7 @@ class CrearGrupoActivity : ComponentActivity() {
                 .background(Color.White)
                 .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
-            Column() {
+            Column {
                 Text(text = "Crear Grupo")
             }
         }
@@ -80,7 +80,7 @@ class CrearGrupoActivity : ComponentActivity() {
             }
         }
         Spacer(modifier = Modifier.size(100.dp))
-        Column() {
+        Column {
             Button(onClick = {
                 nuevoGrupo = Grupo(nombre= nombre, password = password)
                 GrupoRepositorio.save(nuevoGrupo)

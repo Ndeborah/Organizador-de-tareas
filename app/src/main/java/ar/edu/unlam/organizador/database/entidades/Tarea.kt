@@ -2,7 +2,7 @@ package ar.edu.unlam.organizador.database.entidades
 
 import java.util.UUID
 
-data class Tarea (
+data class Tarea(
     var id: String = UUID.randomUUID().toString(),
     var nombre: String = "",
     var grupo: String = "",

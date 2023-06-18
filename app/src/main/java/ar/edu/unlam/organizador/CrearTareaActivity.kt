@@ -70,7 +70,7 @@ class CrearTareaActivity : ComponentActivity() {
                 .background(Color.White)
                 .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
-            Column() {
+            Column {
                 Text(text = "Crear Tarea")
             }
         }
@@ -86,7 +86,7 @@ class CrearTareaActivity : ComponentActivity() {
             }
         }
         Spacer(modifier = Modifier.size(100.dp))
-        Column() {
+        Column {
             Button(onClick = {
                 if (nombreTarea != "") {
                     nuevaTarea = Tarea(nombre = nombreTarea, grupo = nombre)
@@ -121,7 +121,7 @@ class CrearTareaActivity : ComponentActivity() {
     }
 
     private fun irAGrupo(nombre: String) {
-        val intent = Intent(this, GrupoActivity::class.java).apply {
+        val intent = Intent(this, TareasActivity::class.java).apply {
             putExtra("nombre", nombre)
         }
         startActivity(intent)

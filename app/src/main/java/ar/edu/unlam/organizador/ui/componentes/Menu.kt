@@ -12,9 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import ar.edu.unlam.organizador.ChatDeGrupoActivity
-import ar.edu.unlam.organizador.GrupoActivity
+import ar.edu.unlam.organizador.TareasActivity
 import ar.edu.unlam.organizador.MainActivity
-import ar.edu.unlam.organizador.TareasDeGrupoActivity
 import ar.edu.unlam.organizador.ui.theme.Purple40
 
 @Composable
@@ -25,7 +24,7 @@ fun Menu(context: Context) {
 
     val mainActivity = Intent(context, MainActivity::class.java)
 
-    val grupoActivity = Intent(context, GrupoActivity::class.java).apply {
+    val tareasActivity = Intent(context, TareasActivity::class.java).apply {
         putExtra("nombre", "Grupo 1")
     }
 
@@ -36,7 +35,6 @@ fun Menu(context: Context) {
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         Button(
             onClick = {
                 context.startActivity(chatDeGrupoActivityIntent)
@@ -50,7 +48,7 @@ fun Menu(context: Context) {
                 context.startActivity(mainActivity)
             }
         ) {
-            Text(text = "Grupos")
+            Text(text = "Tareas")
         }
     }
 }

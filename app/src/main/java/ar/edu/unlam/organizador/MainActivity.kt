@@ -14,9 +14,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -92,21 +95,24 @@ class MainActivity : ComponentActivity() {
         if (tareas.isEmpty()) {
             CircularProgressIndicator()
         } else {
-            LazyColumn(
-                contentPadding = PaddingValues(10.dp),
-                verticalArrangement = Arrangement.spacedBy(5.dp)
+            Box(
+            modifier = Modifier
+                .height(430.dp)
             ) {
-
-                items(grupos) { grupo ->
-                    FilaDeGrupo(
-                        grupo,
-                        tareas.filter { it.grupo == grupo.nombre && !it.realizada }.size,
-                        tareas.filter { it.grupo == grupo.nombre && it.realizada }.size
-                    )
+                LazyColumn(
+                    contentPadding = PaddingValues(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    items(grupos) { grupo ->
+                        FilaDeGrupo(
+                            grupo,
+                            tareas.filter { it.grupo == grupo.nombre && !it.realizada }.size,
+                            tareas.filter { it.grupo == grupo.nombre && it.realizada }.size
+                        )
+                    }
                 }
             }
         }
-
     }
 
     @Composable
@@ -142,16 +148,16 @@ class MainActivity : ComponentActivity() {
     private fun Botones() {
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.SpaceAround,
+            verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(onClick = {
+            Button(modifier = Modifier.width(170.dp), shape = RoundedCornerShape(10), onClick = {
                 irACrearGrupo()
                 onStop()
             }) {
                 Text("Crear Grupo", color = Color.White)
             }
-            Button(onClick = { /*TODO*/ }) {
+            Button(modifier = Modifier.width(170.dp), shape = RoundedCornerShape(10), onClick = { /*TODO*/ }) {
                 Text("Unirse a un Grupo", color = Color.White)
             }
             //BOTÓN PRUEBA CRASHLYTICS

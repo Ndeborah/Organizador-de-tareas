@@ -1,6 +1,6 @@
-package ar.edu.unlam.organizador.database.repositorios
+package ar.edu.unlam.organizador.data.repositorios
 
-import ar.edu.unlam.organizador.database.entidades.Tarea
+import ar.edu.unlam.organizador.data.entidades.Tarea
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase

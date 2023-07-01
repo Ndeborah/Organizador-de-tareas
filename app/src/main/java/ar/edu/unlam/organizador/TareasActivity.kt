@@ -6,11 +6,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,7 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ar.edu.unlam.organizador.database.entidades.Tarea
+import ar.edu.unlam.organizador.data.entidades.Tarea
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.viewmodels.TareasViewModel
@@ -189,13 +187,13 @@ class TareasActivity : ComponentActivity() {
                         onClick = { deleteAction(item.id) },
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.Delete, contentDescription = "Agregar Tarea"
+                            imageVector = Icons.Filled.Delete, contentDescription = "Borrar Tarea"
                         )
                     }
                     IconButton(onClick = { taskAction(item.id) }) {
                         val image = if (item.realizada) Icons.Filled.Clear else Icons.Filled.Check
                         Icon(
-                            imageVector = image, contentDescription = "Agregar Tarea"
+                            imageVector = image, contentDescription = "Check or Clear Tarea"
                         )
                     }
                 }
@@ -205,14 +203,14 @@ class TareasActivity : ComponentActivity() {
 
     @Preview
     @Composable
-    private fun itemcito() {
-        TareasDeGrupo("Lele")
+    private fun Itemcito() {
+        TareasDeGrupo("Grupo de Prueba")
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Preview
     @Composable
-    private fun screen() {
+    private fun Screen() {
         OrganizadorTheme {
             Scaffold { paddingValues ->
                 ListaTareas(

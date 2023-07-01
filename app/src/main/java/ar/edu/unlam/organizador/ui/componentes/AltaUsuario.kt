@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AltaUsuarioForm(
-    texto: String,
+    nombre: String,
     cambioDeValorNombre: (String) -> Unit,
     erroresNombre: MutableList<String>,
     numero: String,
@@ -39,7 +39,7 @@ fun AltaUsuarioForm(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TextField(
-                value = texto,
+                value = nombre,
                 onValueChange = {
                     cambioDeValorNombre(it)
                 },
@@ -74,6 +74,7 @@ fun AltaUsuarioForm(
                 )
             }
         }
+
         Button(
             onClick = accionAceptar,
             enabled = validData,

@@ -33,7 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import ar.edu.unlam.organizador.database.entidades.Grupo
+import ar.edu.unlam.organizador.data.entidades.Grupo
 import ar.edu.unlam.organizador.ui.componentes.AltaUsuarioForm
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
@@ -44,8 +44,8 @@ class MainActivity : ComponentActivity() {
 
     //Con esta función se crea el usuario se finaliza la activity inicial y re vuelve a iniciar ya en la vista principal.
     //Porque la activity de inicio es la activity principal cuando hay un usuario.
-    private fun navigate() {
-        mainViewModel.crearUsuario()
+    private fun access() {
+        mainViewModel.ingresarUsuario()
         val intent = intent
         finish() //Finaliza luego de crear el usuario.
         startActivity(intent) //Reinicializa para ver la vista principal.
@@ -55,18 +55,19 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val mainUiState by mainViewModel.uiState.collectAsState()
+            val usuarioState by mainViewModel.usuarioState.collectAsState()
             OrganizadorTheme {
-                if (mainViewModel.usuario != null) {
+                if (usuarioState.exists) {
                     Base(this)
                 } else {
                     AltaUsuarioForm(
-                        texto = mainUiState.currentName,
+                        nombre = mainUiState.currentName,
                         cambioDeValorNombre = mainViewModel::actualizarNombre,
                         erroresNombre = mainUiState.currentNameErrors,
                         numero = mainUiState.currentTelefono,
                         cambioDeValorNumero = mainViewModel::actualizarTelefono,
                         erroresNumero = mainUiState.currentTelefonoErrors,
-                        accionAceptar = this::navigate,
+                        accionAceptar = this::access,
                         validData = mainUiState.validForm
                     )
                 }
@@ -96,8 +97,8 @@ class MainActivity : ComponentActivity() {
             CircularProgressIndicator()
         } else {
             Box(
-            modifier = Modifier
-                .height(430.dp)
+                modifier = Modifier
+                    .height(430.dp)
             ) {
                 LazyColumn(
                     contentPadding = PaddingValues(10.dp),
@@ -157,7 +158,10 @@ class MainActivity : ComponentActivity() {
             }) {
                 Text("Crear Grupo", color = Color.White)
             }
-            Button(modifier = Modifier.width(170.dp), shape = RoundedCornerShape(10), onClick = { /*TODO*/ }) {
+            Button(
+                modifier = Modifier.width(170.dp),
+                shape = RoundedCornerShape(10),
+                onClick = { /*TODO*/ }) {
                 Text("Unirse a un Grupo", color = Color.White)
             }
             //BOTÓN PRUEBA CRASHLYTICS

@@ -1,6 +1,6 @@
-package ar.edu.unlam.organizador.database.repositorios
+package ar.edu.unlam.organizador.data.repositorios
 
-import ar.edu.unlam.organizador.database.entidades.Grupo
+import ar.edu.unlam.organizador.data.entidades.Grupo
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -51,21 +51,22 @@ object GrupoRepositorio {
     }
 
     fun listaGrupos(): MutableList<Grupo> {
-        val listener = object: ValueEventListener {
+        val listener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 dataSnapshot.children.forEach { child ->
-                    val grupo: Grupo? = Grupo(
+                    val grupo = Grupo(
                         child.child("id").getValue<String>()!!,
                         child.child("nombre").getValue<String>()!!,
                         child.child("password").getValue<String>()!!,
                     )
-                    grupo?.let {
-                        if(!existe(it.nombre)) {
+                    grupo.let {
+                        if (!existe(it.nombre)) {
                             listaGrupos.add(it)
                         }
                     }
                 }
             }
+
             override fun onCancelled(error: DatabaseError) {
             }
         }

@@ -1,4 +1,4 @@
-package ar.edu.unlam.organizador.database.entidades
+package ar.edu.unlam.organizador.data.entidades
 
 import java.util.UUID
 

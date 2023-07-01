@@ -33,8 +33,8 @@ import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ar.edu.unlam.organizador.database.entidades.Grupo
-import ar.edu.unlam.organizador.database.repositorios.GrupoRepositorio
+import ar.edu.unlam.organizador.data.entidades.Grupo
+import ar.edu.unlam.organizador.data.repositorios.GrupoRepositorio
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.theme.Purple40
 

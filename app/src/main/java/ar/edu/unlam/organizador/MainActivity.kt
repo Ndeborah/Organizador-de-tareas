@@ -28,12 +28,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import ar.edu.unlam.organizador.database.entidades.Grupo
+import ar.edu.unlam.organizador.data.entidades.Grupo
 import ar.edu.unlam.organizador.ui.componentes.AltaUsuarioForm
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
@@ -44,31 +43,35 @@ class MainActivity : ComponentActivity() {
 
     //Con esta función se crea el usuario se finaliza la activity inicial y re vuelve a iniciar ya en la vista principal.
     //Porque la activity de inicio es la activity principal cuando hay un usuario.
-    private fun navigate() {
-        mainViewModel.crearUsuario()
-        val intent = intent
-        finish() //Finaliza luego de crear el usuario.
-        startActivity(intent) //Reinicializa para ver la vista principal.
+    private fun access() {
+        mainViewModel.ingresarUsuario(applicationContext)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val mainUiState by mainViewModel.uiState.collectAsState()
+            val usuarioState by mainViewModel.usuarioState.collectAsState()
+            mainViewModel.getUsuarioLocal(applicationContext)
             OrganizadorTheme {
-                if (mainViewModel.usuario != null) {
-                    Base(this)
+                if (mainUiState.loading) {
+                    CircularProgressIndicator()
                 } else {
-                    AltaUsuarioForm(
-                        texto = mainUiState.currentName,
-                        cambioDeValorNombre = mainViewModel::actualizarNombre,
-                        erroresNombre = mainUiState.currentNameErrors,
-                        numero = mainUiState.currentTelefono,
-                        cambioDeValorNumero = mainViewModel::actualizarTelefono,
-                        erroresNumero = mainUiState.currentTelefonoErrors,
-                        accionAceptar = this::navigate,
-                        validData = mainUiState.validForm
-                    )
+                    if (usuarioState.exists) {
+                        mainViewModel.loadTasks()
+                        Base(this)
+                    } else {
+                        AltaUsuarioForm(
+                            nombre = mainUiState.currentName,
+                            cambioDeValorNombre = mainViewModel::actualizarNombre,
+                            erroresNombre = mainUiState.currentNameErrors,
+                            numero = mainUiState.currentTelefono,
+                            cambioDeValorNumero = mainViewModel::actualizarTelefono,
+                            erroresNumero = mainUiState.currentTelefonoErrors,
+                            accionAceptar = this::access,
+                            validData = mainUiState.validForm
+                        )
+                    }
                 }
             }
         }
@@ -91,13 +94,13 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun MostrarGrupos(grupos: MutableList<Grupo>) {
-        val tareas by mainViewModel.tareas.observeAsState(initial = emptyList())
+        val tareas by mainViewModel.tareas.collectAsState(initial = emptyList())
         if (tareas.isEmpty()) {
             CircularProgressIndicator()
         } else {
             Box(
-            modifier = Modifier
-                .height(430.dp)
+                modifier = Modifier
+                    .height(430.dp)
             ) {
                 LazyColumn(
                     contentPadding = PaddingValues(10.dp),
@@ -138,7 +141,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun nombreDeGrupo(nombre: String) {
-        val intent = Intent(this, TareasActivity::class.java).apply {
+        val intent = Intent(this, TareasDeGrupoActivity::class.java).apply {
             putExtra("nombre", nombre)
         }
         startActivity(intent)
@@ -157,7 +160,10 @@ class MainActivity : ComponentActivity() {
             }) {
                 Text("Crear Grupo", color = Color.White)
             }
-            Button(modifier = Modifier.width(170.dp), shape = RoundedCornerShape(10), onClick = { /*TODO*/ }) {
+            Button(
+                modifier = Modifier.width(170.dp),
+                shape = RoundedCornerShape(10),
+                onClick = { /*TODO*/ }) {
                 Text("Unirse a un Grupo", color = Color.White)
             }
             //BOTÓN PRUEBA CRASHLYTICS

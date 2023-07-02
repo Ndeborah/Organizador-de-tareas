@@ -2,8 +2,8 @@ package ar.edu.unlam.organizador.ui.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import ar.edu.unlam.organizador.database.entidades.Tarea
-import ar.edu.unlam.organizador.database.repositorios.TareaRepositorio
+import ar.edu.unlam.organizador.data.entidades.Tarea
+import ar.edu.unlam.organizador.data.repositorios.TareaRepositorio
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener

@@ -52,7 +52,7 @@ class UsuarioActivity : ComponentActivity() {
     @Composable
     private fun Base(context: Context, usuario: Usuario) {
         Scaffold(
-            topBar = { Menu(context) }
+            topBar = { Menu(context, "usuario") }
         ) { paddingValues ->
             UsuarioCard(
                 modifier = Modifier.padding(paddingValues),

@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
                     if (usuarioState.exists) {
                         mainViewModel.traerTodo()
                         Scaffold(
-                            topBar = { Menu(context = applicationContext) }
+                            topBar = { Menu(context = applicationContext, "tareas") }
                         ) {
                             Base(
                                 mainUiState.tareas,

@@ -53,7 +53,7 @@ class CrearTareaActivity : ComponentActivity() {
         setContent {
             OrganizadorTheme {
                 Scaffold(
-                    topBar = { Menu(applicationContext) },
+                    topBar = { Menu(applicationContext, "tareas") },
                     bottomBar = {}
                 ) { paddingValues ->
                     Base(modifier = Modifier.padding(paddingValues))

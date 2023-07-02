@@ -134,7 +134,7 @@ class CrearTareaActivity : ComponentActivity() {
     }
 
     private fun irAGrupo(nombre: String) {
-        val intent = Intent(this, TareasActivity::class.java).apply {
+        val intent = Intent(this, TareasDeGrupoActivity::class.java).apply {
             putExtra("nombre", nombre)
         }
         startActivity(intent)

@@ -48,7 +48,7 @@ import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.viewmodels.TareasViewModel
 
-class TareasActivity : ComponentActivity() {
+class TareasDeGrupoActivity : ComponentActivity() {
 
     private val viewModel by viewModels<TareasViewModel>()
 

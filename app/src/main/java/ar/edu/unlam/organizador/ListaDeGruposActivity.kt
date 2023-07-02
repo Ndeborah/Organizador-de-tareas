@@ -3,7 +3,7 @@ package ar.edu.unlam.organizador
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 
-class GrupoActivity : ComponentActivity() {
+class ListaDeGruposActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

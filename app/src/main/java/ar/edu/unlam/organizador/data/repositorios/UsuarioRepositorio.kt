@@ -3,6 +3,7 @@ package ar.edu.unlam.organizador.data.repositorios
 import ar.edu.unlam.organizador.data.entidades.Usuario
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 
 object UsuarioRepositorio {
@@ -20,8 +21,16 @@ object UsuarioRepositorio {
         db.child(firebaseReference).child(usuario.numeroTelefono).setValue(usuario)
     }
 
-    fun traerUsuarioLocal(): Usuario? {
-        return usuarios.getOrNull(0)
+    fun getUsuarioByID(id: String, onSucess: (Usuario) -> Unit, onFailure: () -> Unit) {
+        db.child(firebaseReference).child(id).get().addOnSuccessListener {
+            it.getValue(Usuario::class.java).let { usuario ->
+                if (usuario != null && usuario.nickname !== "") {
+                    onSucess(usuario)
+                } else {
+                    onFailure()
+                }
+            }
+        }
     }
 
     fun getOrCreate(usuario: Usuario, onSucess: (Usuario) -> Unit, onError: (Exception) -> Unit) {

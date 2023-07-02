@@ -1,28 +1,31 @@
 package ar.edu.unlam.organizador
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,9 +33,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.organizador.data.entidades.Grupo
+import ar.edu.unlam.organizador.data.entidades.Tarea
+import ar.edu.unlam.organizador.data.repositorios.TareaRepositorio
 import ar.edu.unlam.organizador.ui.componentes.AltaUsuarioForm
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
@@ -47,6 +51,7 @@ class MainActivity : ComponentActivity() {
         mainViewModel.ingresarUsuario(applicationContext)
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -58,8 +63,18 @@ class MainActivity : ComponentActivity() {
                     CircularProgressIndicator()
                 } else {
                     if (usuarioState.exists) {
-                        mainViewModel.loadTasks()
-                        Base(this)
+                        mainViewModel.traerTodo()
+                        Scaffold(
+                            topBar = { Menu(context = applicationContext) }
+                        ) {
+                            Base(
+                                mainUiState.tareas,
+                                mainUiState.grupos,
+                                deleteAction = this::deleteTarea,
+                                completeAction = this::switchStatus,
+                                modifier = Modifier.padding(it)
+                            )
+                        }
                     } else {
                         AltaUsuarioForm(
                             nombre = mainUiState.currentName,
@@ -77,40 +92,108 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @SuppressLint("UnrememberedMutableState")
     @Composable
-    private fun Base(context: Context) {
-        // A surface container using the 'background' color from the theme
-        Scaffold(
-            topBar = { Menu(context) }
-        ) { paddingValues ->
-            Column(modifier = Modifier.padding(paddingValues)) {
-                MostrarGrupos(mainViewModel.grupos)
-                Botones()
+    private fun Base(
+        tareas: List<Tarea>,
+        grupos: MutableList<Grupo>,
+        deleteAction: (String) -> Unit,
+        completeAction: (String) -> Unit,
+        modifier: Modifier = Modifier
+    ) {
+        Column(modifier = modifier) {
+            ListaTareasPorGrupo(
+                tareasPendientes = tareas.filter { !it.realizada }.toMutableList(),
+                tareasRealizadas = tareas.filter { it.realizada }.toMutableList(),
+                grupos = grupos,
+                deleteAction = deleteAction,
+                completeAction = completeAction
+            )
+        }
+    }
+
+    @Composable
+    private fun ListaTareasPorGrupo(
+        tareasPendientes: MutableList<Tarea>,
+        tareasRealizadas: MutableList<Tarea>,
+        grupos: MutableList<Grupo>,
+        deleteAction: (String) -> Unit,
+        completeAction: (String) -> Unit,
+        modifier: Modifier = Modifier
+    ) {
+        if (grupos.isNotEmpty()) {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(1.dp),
+                modifier = modifier
+            ) {
+                item {
+                    Separador(text = "Pendientes")
+                }
+                items(grupos) { grupo ->
+                    val tareas = tareasPendientes.filter {
+                        it.grupo == grupo.nombre
+                    }.toMutableList()
+                    TareasDeGrupo(
+                        grupo = grupo,
+                        tareas = tareas,
+                        deleteAction = deleteAction,
+                        completeAction = completeAction
+                    )
+                }
+                item {
+                    Separador(text = "Realizadas")
+                }
+                items(grupos) { grupo ->
+                    val tareas = tareasRealizadas.filter {
+                        it.grupo == grupo.nombre
+                    }.toMutableList()
+                    TareasDeGrupo(
+                        grupo = grupo,
+                        tareas = tareas,
+                        deleteAction = deleteAction,
+                        completeAction = completeAction
+                    )
+                }
             }
         }
     }
 
     @Composable
-    private fun MostrarGrupos(grupos: MutableList<Grupo>) {
-        val tareas by mainViewModel.tareas.collectAsState(initial = emptyList())
-        if (tareas.isEmpty()) {
-            CircularProgressIndicator()
-        } else {
-            Box(
-                modifier = Modifier
-                    .height(430.dp)
-            ) {
-                LazyColumn(
-                    contentPadding = PaddingValues(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(5.dp)
+    private fun Separador(text: String) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 10.dp, vertical = 5.dp)
+        ) {
+            Text(text = text, modifier = Modifier.align(Alignment.Center))
+        }
+    }
+
+    @Composable
+    private fun TareaListItem(
+        item: Tarea, deleteAction: (String) -> Unit, taskAction: (String) -> Unit
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp, vertical = 10.dp)
+        ) {
+            Column(modifier = Modifier.padding(10.dp)) {
+                Text(text = item.nombre)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
                 ) {
-                    items(grupos) { grupo ->
-                        FilaDeGrupo(
-                            grupo,
-                            tareas.filter { it.grupo == grupo.nombre && !it.realizada }.size,
-                            tareas.filter { it.grupo == grupo.nombre && it.realizada }.size
+                    IconButton(
+                        onClick = { deleteAction(item.id) },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Delete, contentDescription = "Borrar Tarea"
+                        )
+                    }
+                    IconButton(onClick = { taskAction(item.id) }) {
+                        val image = if (item.realizada) Icons.Filled.Clear else Icons.Filled.Check
+                        Icon(
+                            imageVector = image, contentDescription = "Check or Clear Tarea"
                         )
                     }
                 }
@@ -119,63 +202,46 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun FilaDeGrupo(grupo: Grupo, totalPendientes: Int, totalRealizadas: Int) {
-        onStop()
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-                .padding(horizontal = 10.dp, vertical = 10.dp)
-                .clickable(enabled = true, onClick = { nombreDeGrupo(grupo.nombre) })
+    private fun BotonAgregar(nombre: String) {
+        FloatingActionButton(
+            onClick = { irAAgregarTarea(nombre) }, modifier = Modifier.size(40.dp)
         ) {
-            Column {
-                Text(text = grupo.nombre)
-                Text(
-                    text = "Pendientes: $totalPendientes"
-                )
-                Text(
-                    text = "Realizadas: $totalRealizadas"
-                )
-            }
+            Icon(imageVector = Icons.Default.Add, contentDescription = "Agregar Tarea")
         }
     }
 
-    private fun nombreDeGrupo(nombre: String) {
-        val intent = Intent(this, TareasDeGrupoActivity::class.java).apply {
-            putExtra("nombre", nombre)
-        }
+    private fun irAAgregarTarea(nombreDelGrupo: String) {
+        val intent = Intent(this, CrearTareaActivity::class.java)
         startActivity(intent)
     }
 
     @Composable
-    private fun Botones() {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Button(modifier = Modifier.width(170.dp), shape = RoundedCornerShape(10), onClick = {
-                irACrearGrupo()
-                onStop()
-            }) {
-                Text("Crear Grupo", color = Color.White)
-            }
-            Button(
-                modifier = Modifier.width(170.dp),
-                shape = RoundedCornerShape(10),
-                onClick = { /*TODO*/ }) {
-                Text("Unirse a un Grupo", color = Color.White)
-            }
-            //BOTÓN PRUEBA CRASHLYTICS
+    fun TareasDeGrupo(
+        grupo: Grupo,
+        tareas: MutableList<Tarea>,
+        deleteAction: (String) -> Unit,
+        completeAction: (String) -> Unit
+    ) {
+        if (tareas.isNotEmpty()) {
+            Column {
+                Separador(text = "Tareas de ${grupo.nombre}")
+                tareas.forEach {
+                    TareaListItem(it, deleteAction, completeAction)
+                }
 
-            /*Button(onClick = {throw RuntimeException("Test Crash")}) {
-                Text(text = "Prueba")
-            }*/
+            }
         }
     }
 
-    private fun irACrearGrupo() {
-        val intent = Intent(this, CrearGrupoActivity::class.java)
-        startActivity(intent)
+    private fun deleteTarea(tarea: String) {
+        TareaRepositorio.deleteByID(tarea)
+    }
+
+    // Se trae la tarea del repositorio usando el id de la tarea.
+    // Le cambia a la tarea el estado de realizado por el opuesto
+    // Actualiza la tarea en el repositorio
+    // Llama a la acción de cambiar de estado del view model.
+    private fun switchStatus(taskId: String) {
+        mainViewModel.switchStatusTarea(taskId)
     }
 }

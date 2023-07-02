@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import ar.edu.unlam.organizador.TareasDeGrupoActivity
+import ar.edu.unlam.organizador.ListaDeGruposActivity
 import ar.edu.unlam.organizador.MainActivity
 import ar.edu.unlam.organizador.UsuarioActivity
 import ar.edu.unlam.organizador.ui.theme.Purple40
@@ -24,9 +24,11 @@ fun Menu(context: Context) {
 
     val mainActivity = Intent(context, MainActivity::class.java)
 
-    val tareasDeGrupoActivity = Intent(context, TareasDeGrupoActivity::class.java).apply {
-        putExtra("nombre", "Grupo 1")
-    }
+//    val tareasDeGrupoActivity = Intent(context, TareasDeGrupoActivity::class.java).apply {
+//        putExtra("nombre", "Grupo 1")
+//    }
+
+    val listaDeGruposActivity = Intent(context, ListaDeGruposActivity::class.java)
 
     val usuarioActivity = Intent(context, UsuarioActivity::class.java)
 
@@ -37,14 +39,13 @@ fun Menu(context: Context) {
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
-//        Button(
-//            onClick = {
-//                context.startActivity(chatDeGrupoActivityIntent)
-//
-//            }
-//        ) {
-//            Text(text = "Chat")
-//        }
+        Button(
+            onClick = {
+                context.startActivity(listaDeGruposActivity)
+            }
+        ) {
+            Text(text = "Grupos")
+        }
         Button(
             onClick = {
                 context.startActivity(mainActivity)
@@ -59,5 +60,13 @@ fun Menu(context: Context) {
         ) {
             Text(text = "Usuario")
         }
+        //        Button(
+//            onClick = {
+//                context.startActivity(chatDeGrupoActivityIntent)
+//
+//            }
+//        ) {
+//            Text(text = "Chat")
+//        }
     }
 }

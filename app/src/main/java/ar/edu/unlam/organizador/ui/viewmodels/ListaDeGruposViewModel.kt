@@ -1,34 +1,58 @@
 package ar.edu.unlam.organizador.ui.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import ar.edu.unlam.organizador.data.entidades.Grupo
 import ar.edu.unlam.organizador.data.entidades.Tarea
-import ar.edu.unlam.organizador.data.repositorios.GrupoRepositorio
+import ar.edu.unlam.organizador.data.entidades.Usuario
 import ar.edu.unlam.organizador.data.repositorios.TareaRepositorio
+import ar.edu.unlam.organizador.data.repositorios.UsuarioLocalRepositorio
+import ar.edu.unlam.organizador.data.repositorios.UsuarioRepositorio
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
-data class ListaUiState(
+data class ListaDeGruposUIState(
     val loading: Boolean = false,
-    val grupos: MutableList<Grupo> = mutableListOf(),
+    val grupos: MutableCollection<Grupo> = mutableListOf(),
+    val usuario: Usuario = Usuario("", ""),
     val tareas: MutableList<Tarea> = mutableListOf()
 )
 
-class ListaDeGruposViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow(ListaUiState())
+@HiltViewModel
+class ListaDeGruposViewModel @Inject constructor(
+    private val tareaRepositorio: TareaRepositorio,
+    private val usuarioLocalRepositorio: UsuarioLocalRepositorio,
+    private val usuarioRepositorio: UsuarioRepositorio
+
+) : ViewModel() {
+    private val _uiState = MutableStateFlow(ListaDeGruposUIState())
     val uiState = _uiState.asStateFlow()
 
-
-    fun setUp() {
+    fun setUp(context: Context) {
         startLoading()
-        TareaRepositorio.listenDb(listener)
-        _uiState.value = _uiState.value.copy(
-            grupos = GrupoRepositorio.listaGrupos()
-        )
+        getUsuarioLocal(context)
+        tareaRepositorio.listenDb(listener)
         finishLoading()
+    }
+
+    fun getUsuarioLocal(context: Context) {
+        val idUsuarioLocal = usuarioLocalRepositorio.getIdUsuario(context) ?: return
+        usuarioRepositorio.getUsuarioByID(idUsuarioLocal,
+            onSucess = {
+                _uiState.value = _uiState.value.copy(
+                    usuario = it,
+                    grupos = it.grupos.values
+                )
+            },
+            onFailure = {
+                throw Exception("lele")
+            }
+        )
     }
 
     // Crea un listener para escuchar los cambios que hay en la base de datos de firebase

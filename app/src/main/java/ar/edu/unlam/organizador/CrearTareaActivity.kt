@@ -3,6 +3,7 @@ package ar.edu.unlam.organizador
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -33,12 +35,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ar.edu.unlam.organizador.data.entidades.Grupo
 import ar.edu.unlam.organizador.data.entidades.Tarea
-import ar.edu.unlam.organizador.data.repositorios.TareaRepositorio
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.theme.Purple40
+import ar.edu.unlam.organizador.ui.viewmodels.CrearTareaViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CrearTareaActivity : ComponentActivity() {
+    private val viewModel: CrearTareaViewModel by viewModels()
     private lateinit var nuevaTarea: Tarea
     var nombreTarea: String = ""
     val grupo = Grupo()
@@ -48,27 +53,27 @@ class CrearTareaActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val bundle = intent.extras
-        val nombre: String? = bundle?.getString("nombre")
+        val id: String? = bundle?.getString("id")
 
         setContent {
             OrganizadorTheme {
-                Scaffold(
-                    topBar = { Menu(applicationContext, "tareas") },
-                    bottomBar = {}
-                ) { paddingValues ->
-                    Base(modifier = Modifier.padding(paddingValues))
+                Scaffold(topBar = { Menu(applicationContext, "tareas") },
+                    bottomBar = {}) { paddingValues ->
+                    Base(modifier = Modifier.padding(paddingValues), id!!)
                 }
             }
         }
     }
 
     @Composable
-    private fun Base(modifier: Modifier = Modifier) {
-
+    private fun Base(modifier: Modifier = Modifier, id: String) {
+        Card(modifier = modifier) {
+            CrearTarea(id)
+        }
     }
 
     @Composable
-    private fun CrearTarea(nombre: String) {
+    private fun CrearTarea(idGrupo: String) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -100,16 +105,15 @@ class CrearTareaActivity : ComponentActivity() {
         ) {
             Button(modifier = Modifier.width(170.dp), shape = RoundedCornerShape(10), onClick = {
                 if (nombreTarea != "") {
-                    nuevaTarea = Tarea(nombre = nombreTarea, grupo = nombre)
-                    TareaRepositorio.save(nuevaTarea)
+                    nuevaTarea = Tarea(nombre = nombreTarea)
+                    viewModel.save(idGrupo, nuevaTarea)
                     finish()
                 }
 
             }) {
                 Text(text = "Crear")
             }
-            Button(
-                modifier = Modifier.width(170.dp),
+            Button(modifier = Modifier.width(170.dp),
                 shape = RoundedCornerShape(10),
                 onClick = { finish() }) {
                 Text(text = "Cancelar")

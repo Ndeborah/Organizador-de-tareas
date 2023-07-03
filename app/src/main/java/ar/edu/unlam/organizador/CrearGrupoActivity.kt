@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,11 +20,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,38 +37,45 @@ import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ar.edu.unlam.organizador.data.entidades.Grupo
-import ar.edu.unlam.organizador.data.repositorios.GrupoRepositorio
+import ar.edu.unlam.organizador.data.entidades.Usuario
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.theme.Purple40
+import ar.edu.unlam.organizador.ui.viewmodels.CrearGrupoViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CrearGrupoActivity : ComponentActivity() {
-    private lateinit var nuevoGrupo: Grupo
+    private val viewModel: CrearGrupoViewModel by viewModels()
     var nombre: String = ""
-    var password = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val uiState by viewModel.uiState.collectAsState()
+            viewModel.getUsuarioLocal(applicationContext)
             OrganizadorTheme {
-                Base()
+                if (uiState.loading) {
+                    CircularProgressIndicator()
+                } else {
+                    Base(uiState.usuario)
+                }
             }
         }
     }
 
     @Composable
-    private fun Base() {
+    private fun Base(usuario: Usuario) {
         Surface(
             modifier = Modifier.fillMaxSize()
         ) {
             Column {
-                CrearGrupo()
+                CrearGrupo(usuario)
             }
         }
     }
 
     @Composable
-    private fun CrearGrupo() {
+    private fun CrearGrupo(usuario: Usuario) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -73,7 +84,7 @@ class CrearGrupoActivity : ComponentActivity() {
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column{
+            Column {
                 Text(text = "Crear Grupo", fontSize = 20.sp, color = White)
             }
         }
@@ -89,21 +100,21 @@ class CrearGrupoActivity : ComponentActivity() {
             }
         }
         Spacer(modifier = Modifier.size(100.dp))
-        Column (
+        Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.SpaceAround,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(modifier = Modifier.width(170.dp), shape = RoundedCornerShape(10), onClick = {
-                nuevoGrupo = Grupo(nombre= nombre, password = password)
-                GrupoRepositorio.save(nuevoGrupo)
+                viewModel.crearGrupo(nombre, usuario.numeroTelefono)
                 irAMain()
                 finish()
-            })
-            {
+            }) {
                 Text(text = "Crear")
             }
-            Button(modifier = Modifier.width(170.dp), shape = RoundedCornerShape(10), onClick = { finish() }) {
+            Button(modifier = Modifier.width(170.dp),
+                shape = RoundedCornerShape(10),
+                onClick = { finish() }) {
                 Text(text = "Cancelar")
             }
         }
@@ -111,14 +122,15 @@ class CrearGrupoActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun IngresarNombre(){
-        var text by remember { mutableStateOf(TextFieldValue(""))}
-        OutlinedTextField (
-            value = text,
-            onValueChange = { text = it } ,
-            label = { Text(text = "Ingresar el nombre del nuevo Grupo")},
+    private fun IngresarNombre() {
+        var text by remember { mutableStateOf(TextFieldValue("")) }
+        OutlinedTextField(value = text,
+            onValueChange = { text = it },
+            label = { Text(text = "Ingresar el nombre del nuevo Grupo") },
             singleLine = true,
-            modifier = Modifier.padding(top = 20.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(top = 20.dp)
+                .fillMaxWidth()
         )
         nombre = text.text
     }

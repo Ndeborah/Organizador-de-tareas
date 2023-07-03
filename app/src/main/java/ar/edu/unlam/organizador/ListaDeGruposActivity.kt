@@ -11,25 +11,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,34 +28,33 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.organizador.data.entidades.Grupo
-import ar.edu.unlam.organizador.data.entidades.Tarea
+import ar.edu.unlam.organizador.data.entidades.getTareas
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.viewmodels.ListaDeGruposViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ListaDeGruposActivity : ComponentActivity() {
     private val viewModel by viewModels<ListaDeGruposViewModel>()
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.setUp()
+        viewModel.setUp(applicationContext)
         val bundle = intent.extras
 
         setContent {
             val uiState = viewModel.uiState.collectAsState()
-
             OrganizadorTheme {
                 Scaffold(
                     topBar = { Menu(applicationContext, "grupos") },
                     bottomBar = {
-
                         Botones()
                     }
                 ) {
@@ -76,7 +63,6 @@ class ListaDeGruposActivity : ComponentActivity() {
                     } else {
                         Body(
                             grupos = uiState.value.grupos,
-                            tareas = uiState.value.tareas,
                             modifier = Modifier.padding(it)
                         )
                     }
@@ -88,32 +74,27 @@ class ListaDeGruposActivity : ComponentActivity() {
 
     @Composable
     private fun Body(
-        grupos: MutableList<Grupo>,
-        tareas: MutableList<Tarea>,
+        grupos: MutableCollection<Grupo>,
         modifier: Modifier = Modifier
     ) {
         // A surface container using the 'background' color from the theme
         Column(modifier = modifier) {
-            MostrarGrupos(grupos, tareas)
+            MostrarGrupos(grupos)
         }
     }
 
     @Composable
-    private fun MostrarGrupos(grupos: MutableList<Grupo>, tareas: MutableList<Tarea>) {
-        if (tareas.isEmpty()) {
-            CircularProgressIndicator()
-        } else {
-            LazyColumn(
-                contentPadding = PaddingValues(10.dp),
-                verticalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                items(grupos) { grupo ->
-                    FilaDeGrupo(
-                        grupo,
-                        tareas.filter { it.grupo == grupo.nombre && !it.realizada }.size,
-                        tareas.filter { it.grupo == grupo.nombre && it.realizada }.size
-                    )
-                }
+    private fun MostrarGrupos(grupos: MutableCollection<Grupo>) {
+        LazyColumn(
+            contentPadding = PaddingValues(10.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            items(grupos.toList()) { grupo ->
+                FilaDeGrupo(
+                    grupo,
+                    grupo.getTareas().filter { !it.realizada }.size,
+                    grupo.getTareas().filter { it.realizada }.size
+                )
             }
         }
     }

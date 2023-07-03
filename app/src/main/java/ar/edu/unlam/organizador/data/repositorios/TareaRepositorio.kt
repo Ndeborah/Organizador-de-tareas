@@ -4,35 +4,18 @@ import ar.edu.unlam.organizador.data.entidades.Tarea
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import javax.inject.Singleton
 
-object TareaRepositorio {
-
-    private val db = Firebase.database.reference
-    private const val tareaReference = "tarea"
-
-    fun get(id: String, callback: (Tarea) -> Unit) {
-        db.child(tareaReference).child(id).get().addOnSuccessListener { item ->
-            item.getValue(Tarea::class.java)?.let {
-                callback(it)
-            }
-        }
-    }
+interface TareaRepositorio {
+    fun get(grupoId: String, id: String, callback: (Tarea) -> Unit)
 
     // Se trae una tarea específica y le setea el valor del parámetro tarea.
-    fun update(tarea: Tarea) {
-        db.child(tareaReference).child(tarea.id).setValue(tarea)
-    }
+    fun update(grupoId: String, tarea: Tarea)
 
-    fun deleteByID(taskId: String) {
-        db.child(tareaReference).child(taskId).removeValue()
-    }
+    fun deleteByID(taskId: String)
 
     // Esta función expone la base de datos a través del event listener
-    fun listenDb(listener: ValueEventListener) {
-        db.child(tareaReference).addValueEventListener(listener)
-    }
+    fun listenDb(listener: ValueEventListener)
 
-    fun save(tarea: Tarea) {
-        db.child(tareaReference).child(tarea.id).setValue(tarea)
-    }
+    fun save(idGrupo: String, tarea: Tarea)
 }

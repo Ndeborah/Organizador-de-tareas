@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,11 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import ar.edu.unlam.organizador.data.entidades.Usuario
-import ar.edu.unlam.organizador.data.repositorios.UsuarioLocalRepositorio
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.viewmodels.UsuarioViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class UsuarioActivity : ComponentActivity() {
     private val usuarioViewModel by viewModels<UsuarioViewModel>()
 
@@ -52,13 +54,13 @@ class UsuarioActivity : ComponentActivity() {
     @Composable
     private fun Base(context: Context, usuario: Usuario) {
         Scaffold(
-            topBar = { Menu(context) }
+            topBar = { Menu(context, "usuario") }
         ) { paddingValues ->
             UsuarioCard(
                 modifier = Modifier.padding(paddingValues),
                 usuario = usuario,
                 cerrarSesion = {
-                    UsuarioLocalRepositorio.cerrarSesion(context)
+                    usuarioViewModel.cerrarSesion(applicationContext)
                     context.startActivity(Intent(context, MainActivity::class.java))
                 }
             )

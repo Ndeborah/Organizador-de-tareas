@@ -1,153 +1,185 @@
 package ar.edu.unlam.organizador
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import ar.edu.unlam.organizador.data.entidades.Grupo
+import ar.edu.unlam.organizador.data.entidades.getTareas
+import ar.edu.unlam.organizador.ui.componentes.Menu
+import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
+import ar.edu.unlam.organizador.ui.viewmodels.ListaDeGruposViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ListaDeGruposActivity : ComponentActivity() {
+    private val viewModel by viewModels<ListaDeGruposViewModel>()
+
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        /*val bundle = intent.extras
-        val nombre: String? = bundle?.getString("nombre")
-        val grupo: Grupo = GrupoRepositorio.buscarGrupo(nombre!!)
+        viewModel.setUp(applicationContext)
+        val bundle = intent.extras
 
         setContent {
+            val uiState = viewModel.uiState.collectAsState()
             OrganizadorTheme {
-                Base(this, grupo, nombre)
+                Scaffold(
+                    topBar = { Menu(applicationContext, "grupos") },
+                    bottomBar = {
+                        Botones()
+                    }
+                ) {
+                    if (uiState.value.loading) {
+                        CircularProgressIndicator()
+                    } else {
+                        Body(
+                            grupos = uiState.value.grupos,
+                            modifier = Modifier.padding(it)
+                        )
+                    }
+                }
+
             }
         }
     }
 
     @Composable
-    private fun Base(context: Context, grupo: Grupo, nombre: String) {
+    private fun Body(
+        grupos: MutableCollection<Grupo>,
+        modifier: Modifier = Modifier
+    ) {
         // A surface container using the 'background' color from the theme
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = Color.Black
+        Column(modifier = modifier) {
+            MostrarGrupos(grupos)
+        }
+    }
+
+    @Composable
+    private fun MostrarGrupos(grupos: MutableCollection<Grupo>) {
+        LazyColumn(
+            contentPadding = PaddingValues(10.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            Column {
-                Menu(context)
-                NombreDeGrupo(grupo)
-                TareasPendientes(
-                    datos = TareaRepositorio.obtenerListaDeTareasPendientesPorGrupo(
-                        nombre
-                    )
+            items(grupos.toList()) { grupo ->
+                FilaDeGrupo(
+                    grupo,
+                    grupo.getTareas().filter { !it.realizada }.size,
+                    grupo.getTareas().filter { it.realizada }.size
                 )
-                TareasRealizadas(
-                    datos = TareaRepositorio.obtenerListaDeTareasRealizadasPorGrupo(
-                        nombre
-                    )
-                )
-                BotonAgregar(grupo = grupo)
             }
         }
     }
 
     @Composable
-    private fun NombreDeGrupo(grupo: Grupo) {
+    private fun FilaDeGrupo(grupo: Grupo, totalPendientes: Int, totalRealizadas: Int) {
+        onStop()
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White)
                 .padding(horizontal = 10.dp, vertical = 10.dp)
+                .clickable(enabled = true, onClick = { })
         ) {
-            Column() {
+            Column {
                 Text(text = grupo.nombre)
+                Text(
+                    text = "Pendientes: $totalPendientes"
+                )
+                Text(
+                    text = "Realizadas: $totalRealizadas"
+                )
             }
         }
-        Spacer(modifier = Modifier.size(5.dp))
+    }
+
+    @Preview
+    @Composable
+    fun PreviewBotones() {
+        Botones()
     }
 
     @Composable
-    private fun TareasPendientes(datos: MutableList<Tarea>) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-                .padding(horizontal = 10.dp, vertical = 10.dp)
-        ) {
-            Column {
-                Text(text = "Pendientes")
-            }
+    private fun Botones() {
+        NavigationBar(containerColor = MaterialTheme.colorScheme.primaryContainer) {
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Borrar Tarea",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                },
+                selected = false,
+                onClick = {
+                    irACrearGrupo()
+                    onStop()
+                },
+                label = {
+                    Text(
+                        "Crear Grupo",
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            )
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Borrar Tarea",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                },
+                selected = false,
+                onClick = {
+                    irACrearGrupo()
+                    onStop()
+                },
+                label = {
+                    Text(
+                        "Unirse A Un Grupo",
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            )
         }
-        Spacer(modifier = Modifier.size(5.dp))
-        LazyColumn(
-            contentPadding = PaddingValues(10.dp),
-            verticalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            items(datos) { item ->
-                ListItemRowPendiente(item)
-            }
-        }
+        //BOTÓN PRUEBA CRASHLYTICS
+
+        /*Button(onClick = {throw RuntimeException("Test Crash")}) {
+            Text(text = "Prueba")
+        }*/
     }
 
-    @Composable
-    private fun ListItemRowPendiente(item: Tarea) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-                .padding(horizontal = 10.dp, vertical = 10.dp)
-        ) {
-            Column {
-                Text(text = item.nombre)
-            }
-        }
-    }
-
-    @Composable
-    private fun TareasRealizadas(datos: MutableList<Tarea>) {
-        Spacer(modifier = Modifier.size(5.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-                .padding(horizontal = 10.dp, vertical = 10.dp)
-        ) {
-            Column {
-                Text(text = "Realizadas")
-            }
-        }
-        Spacer(modifier = Modifier.size(5.dp))
-        LazyColumn(
-            contentPadding = PaddingValues(10.dp),
-            verticalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            items(datos) { item ->
-                ListItemRowRealizada(item)
-            }
-        }
-    }
-
-    @Composable
-    private fun ListItemRowRealizada(item: Tarea) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-                .padding(horizontal = 10.dp, vertical = 10.dp)
-        ) {
-            Column {
-                Text(text = item.nombre)
-            }
-        }
-    }
-
-    @Composable
-    private fun BotonAgregar(grupo: Grupo) {
-        FloatingActionButton(
-            onClick = { irAAgregar(grupo.nombre) },
-            modifier = Modifier.size(40.dp)
-        ) {
-            Icon(imageVector = Icons.Default.Edit, contentDescription = "Agregar Tarea")
-        }
-    }
-
-    private fun irAAgregar(nombre: String) {
-        val intent = Intent(this, CrearTareaActivity::class.java).apply {
-            putExtra("nombre", nombre)
-        }
+    private fun irACrearGrupo() {
+        val intent = Intent(this, CrearGrupoActivity::class.java)
         startActivity(intent)
-    }*/
     }
 }

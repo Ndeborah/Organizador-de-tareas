@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".OrganizadorDeTareasApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -21,11 +22,6 @@
             android:name=".CrearTareaActivity"
             android:exported="false"
             android:label="@string/title_activity_crear_tarea"
-            android:theme="@style/Theme.Organizador" />
-        <activity
-            android:name=".TareasDeGrupoActivity"
-            android:exported="false"
-            android:label="@string/title_activity_grupo"
             android:theme="@style/Theme.Organizador" />
         <activity
             android:name=".CrearGrupoActivity"

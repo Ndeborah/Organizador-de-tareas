@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.toLowerCase
+import ar.edu.unlam.organizador.ChatDeGrupoActivity
 import ar.edu.unlam.organizador.ListaDeGruposActivity
 import ar.edu.unlam.organizador.MainActivity
 import ar.edu.unlam.organizador.UsuarioActivity
@@ -29,9 +32,9 @@ import java.util.Locale
 
 @Composable
 fun Menu(context: Context, selectedName: String) {
-//    val chatDeGrupoActivityIntent = Intent(context, ChatDeGrupoActivity::class.java).apply {
-//        putExtra("nombre", "Grupo 1")
-//    }
+    val chatDeGrupoActivityIntent = Intent(context, ChatDeGrupoActivity::class.java).apply {
+        putExtra("nombre", "Grupo 1")
+    }
 
     val mainActivity = Intent(context, MainActivity::class.java)
 
@@ -100,5 +103,25 @@ fun Menu(context: Context, selectedName: String) {
                 )
             }
         )
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Email,
+                    contentDescription = "Abrir chat",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            },
+            selected = selectedName.lowercase(Locale.ROOT) == "chat",
+            onClick = {
+                context.startActivity(chatDeGrupoActivityIntent)
+            },
+            label = {
+                Text(
+                    "Chat",
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+        )
+
     }
 }

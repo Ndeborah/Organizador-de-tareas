@@ -13,6 +13,13 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
+import androidx.navigation.NavHost
+import androidx.navigation.NavHostController
+import androidx.navigation.activity
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.organizador.ChatDeGrupoActivity
 import ar.edu.unlam.organizador.ListaDeGruposActivity
 import ar.edu.unlam.organizador.MainActivity
@@ -20,20 +27,27 @@ import ar.edu.unlam.organizador.UsuarioActivity
 import java.util.Locale
 
 @Composable
-fun Menu(context: Context, selectedName: String) {
-    val chatDeGrupoActivityIntent = Intent(context, ChatDeGrupoActivity::class.java).apply {
-        putExtra("nombre", "Grupo 1")
-    }
-
-    val mainActivity = Intent(context, MainActivity::class.java)
-
-//    val tareasDeGrupoActivity = Intent(context, TareasDeGrupoActivity::class.java).apply {
+fun Menu(controller: NavHostController, selectedName: String) {
+//    val chatDeGrupoActivityIntent = Intent(context, ChatDeGrupoActivity::class.java).apply {
 //        putExtra("nombre", "Grupo 1")
 //    }
+//
+//    val mainActivity = Intent(context, MainActivity::class.java)
+//
+////    val tareasDeGrupoActivity = Intent(context, TareasDeGrupoActivity::class.java).apply {
+////        putExtra("nombre", "Grupo 1")
+////    }
+//
+//    val listaDeGruposActivity = Intent(context, ListaDeGruposActivity::class.java)
+//
+//    val usuarioActivity = Intent(context, UsuarioActivity::class.java)
+    NavHost(navController = controller, startDestination = "tareas") {
+        activity("tareas") {
 
-    val listaDeGruposActivity = Intent(context, ListaDeGruposActivity::class.java)
+        }
+        composable()
+    }
 
-    val usuarioActivity = Intent(context, UsuarioActivity::class.java)
     NavigationBar {
         NavigationBarItem(icon = {
             Icon(

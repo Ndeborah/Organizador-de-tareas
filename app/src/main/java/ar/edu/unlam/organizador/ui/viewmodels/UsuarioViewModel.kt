@@ -25,13 +25,13 @@ class UsuarioViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(UsuarioUiState())
     val uiState: StateFlow<UsuarioUiState> = _uiState.asStateFlow()
 
-    fun cerrarSesion(context: Context) {
-        usuarioLocalRepositorio.cerrarSesion(context)
+    fun cerrarSesion() {
+        usuarioLocalRepositorio.cerrarSesion()
     }
 
-    fun getUsuario(context: Context) {
+    fun getUsuario() {
         startLoading()
-        val idUsuarioLocal = usuarioLocalRepositorio.getIdUsuario(context = context) ?: return
+        val idUsuarioLocal = usuarioLocalRepositorio.getIdUsuario() ?: return
         usuarioRepositorio.getUsuarioByID(idUsuarioLocal,
             onSucess = {
                 _uiState.value = _uiState.value.copy(

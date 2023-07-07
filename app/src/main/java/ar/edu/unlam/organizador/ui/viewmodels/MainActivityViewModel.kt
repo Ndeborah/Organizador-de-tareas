@@ -77,8 +77,8 @@ class MainActivityViewModel @Inject constructor(
         grupoRepositorio.listaGruposByIds(idGrupos, listener)
     }
 
-    fun getUsuarioLocal(context: Context) {
-        val idUsuarioLocal = usuarioLocalRepositorio.getIdUsuario(context) ?: return
+    fun getUsuarioLocal() {
+        val idUsuarioLocal = usuarioLocalRepositorio.getIdUsuario() ?: return
         startLoading()
         usuarioRemotoRepositorio.getUsuarioByID(idUsuarioLocal,
             onSucess = {
@@ -159,13 +159,13 @@ class MainActivityViewModel @Inject constructor(
         )
     }
 
-    fun ingresarUsuario(context: Context) {
+    fun ingresarUsuario() {
         usuarioRemotoRepositorio.getOrCreate(
             Usuario(_uiState.value.currentName, _uiState.value.currentTelefono),
             this::storeUserLocally,
             this::onUserGetError
         )
-        usuarioLocalRepositorio.setIdUsuario(context, _uiState.value.currentTelefono)
+        usuarioLocalRepositorio.setIdUsuario(_uiState.value.currentTelefono)
     }
 
     // Se trae la tarea del repositorio usando el id de la tarea.

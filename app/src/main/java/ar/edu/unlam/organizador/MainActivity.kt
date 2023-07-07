@@ -1,7 +1,11 @@
 package ar.edu.unlam.organizador
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import android.widget.Toast.*
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -43,6 +47,7 @@ import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.viewmodels.MainActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import com.google.android.gms.tasks.OnCompleteListener as TasksOnCompleteListener
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -271,4 +276,22 @@ class MainActivity : ComponentActivity() {
     private fun switchStatus(grupoId: String, taskId: String) {
         mainViewModel.switchStatusTarea(grupoId, taskId)
     }
+    //Cloud messaging token
+
+
+    /*FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener {
+        val task ->if (!task.isSuccessful) OnCompleteListener@{
+            Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+            return@OnCompleteListener
+        }
+
+        // Get new FCM registration token
+        val token = task.result
+
+        // Log and toast
+        val msg = getString(R.string.msg_token_fmt, token)
+        Log.d(TAG, msg)
+        makeText(baseContext, msg, LENGTH_SHORT).show()
+    })*/
+
 }

@@ -5,8 +5,8 @@ plugins {
     // Firebase Crashlytics
     id 'com.google.firebase.crashlytics'
     // Inyección de dependencias
-    id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
+    id 'kotlin-kapt'
 }
 
 android {

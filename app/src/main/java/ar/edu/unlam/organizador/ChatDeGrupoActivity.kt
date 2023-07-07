@@ -18,7 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ChatDeGrupoActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +44,8 @@ class ChatDeGrupoActivity : ComponentActivity() {
             color = Color.Black
         ) {
             Column {
-                Menu(context, "Chat"
+                Menu(
+                    context, "Chat"
 
                 )
                 NombreDeGrupo(nombre)
@@ -58,7 +61,7 @@ class ChatDeGrupoActivity : ComponentActivity() {
                 .background(Color.White)
                 .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
-            Column() {
+            Column {
                 Text(text = nombre)
             }
         }

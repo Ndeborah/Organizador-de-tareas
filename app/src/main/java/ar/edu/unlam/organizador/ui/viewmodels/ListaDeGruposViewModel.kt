@@ -33,15 +33,15 @@ class ListaDeGruposViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ListaDeGruposUIState())
     val uiState = _uiState.asStateFlow()
 
-    fun setUp(context: Context) {
+    fun setUp() {
         startLoading()
-        getUsuarioLocal(context)
+        getUsuarioLocal()
         tareaRepositorio.listenDb(listener)
         finishLoading()
     }
 
-    fun getUsuarioLocal(context: Context) {
-        val idUsuarioLocal = usuarioLocalRepositorio.getIdUsuario(context) ?: return
+    fun getUsuarioLocal() {
+        val idUsuarioLocal = usuarioLocalRepositorio.getIdUsuario() ?: return
         usuarioRepositorio.getUsuarioByID(idUsuarioLocal,
             onSucess = {
                 _uiState.value = _uiState.value.copy(

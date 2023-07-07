@@ -29,8 +29,8 @@ class CrearGrupoViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
-    fun getUsuarioLocal(context: Context) {
-        val idUsuarioLocal = usuarioLocalRepositorio.getIdUsuario(context) ?: return
+    fun getUsuarioLocal() {
+        val idUsuarioLocal = usuarioLocalRepositorio.getIdUsuario() ?: return
         startLoading()
         usuarioRepositorio.getUsuarioByID(idUsuarioLocal,
             onSucess = {

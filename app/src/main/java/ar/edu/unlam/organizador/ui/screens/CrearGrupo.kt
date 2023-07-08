@@ -32,6 +32,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.theme.Purple40
 import ar.edu.unlam.organizador.ui.viewmodels.CrearGrupoViewModel
@@ -39,7 +40,7 @@ import ar.edu.unlam.organizador.ui.viewmodels.CrearGrupoViewModel
 var nombreDeGrupo = ""
 
 @Composable
-fun CrearGrupo(viewModel: CrearGrupoViewModel = hiltViewModel()) {
+fun CrearGrupo(controller: NavHostController, viewModel: CrearGrupoViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     viewModel.getUsuarioLocal()
     OrganizadorTheme {
@@ -52,6 +53,7 @@ fun CrearGrupo(viewModel: CrearGrupoViewModel = hiltViewModel()) {
                 Column {
                     Body {
                         viewModel.crearGrupo(nombreDeGrupo, uiState.usuario.numeroTelefono)
+                        controller.navigate("grupos")
                     }
                 }
             }

@@ -84,6 +84,7 @@ class GrupoFirebaseRepo @Inject constructor(val usuarioRepo: UsuarioRepositorio)
                     usuarioRepo.agregarGrupo(idUsuario, grupo) {
                         onError("No se pudo agregar el coso")
                     }
+                    onSuccess()
                 } else {
                     onError("No se encontró el grupo, f")
                 }

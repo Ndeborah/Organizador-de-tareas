@@ -14,7 +14,7 @@ interface UsuarioRepositorio {
 
     fun agregarGrupo(idUsuario: String, grupo: Grupo, onFailure: () -> Unit)
 
+    fun quitarGrupo(idUsuario: String, idGrupo: String, onFailure: () -> Unit)
 
     fun listenDb(listener: ValueEventListener)
-
 }

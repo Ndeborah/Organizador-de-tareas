@@ -12,7 +12,7 @@ interface TareaRepositorio {
     // Se trae una tarea específica y le setea el valor del parámetro tarea.
     fun update(grupoId: String, tarea: Tarea)
 
-    fun deleteByID(taskId: String)
+    fun deleteByID(grupoId: String, taskId: String)
 
     // Esta función expone la base de datos a través del event listener
     fun listenDb(listener: ValueEventListener)

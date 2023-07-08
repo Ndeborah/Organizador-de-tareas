@@ -79,6 +79,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-config-ktx' //configuracion remota
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation 'com.google.firebase:firebase-config-ktx'
+    implementation 'com.google.firebase:firebase-messaging-ktx'
 
 
     // Implementaciones Test

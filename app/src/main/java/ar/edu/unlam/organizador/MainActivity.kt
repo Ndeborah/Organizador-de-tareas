@@ -340,3 +340,19 @@ fun TareasDeGrupo(
         }
     }
 }
+
+
+        /*FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener {
+            val task ->if (!task.isSuccessful) OnCompleteListener@{
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+
+            // Log and toast
+            val msg = getString(R.string.msg_token_fmt, token)
+            Log.d(TAG, msg)
+            makeText(baseContext, msg, LENGTH_SHORT).show()
+        })*/

@@ -10,6 +10,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -19,44 +20,42 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.organizador.data.entidades.Usuario
-import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.viewmodels.UsuarioViewModel
 
 
 @Composable
 fun UsuarioScreen(
+    closeAction: () -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: UsuarioViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val controller: NavController = rememberNavController()
     viewModel.getUsuario()
     OrganizadorTheme {
         if (uiState.loading) {
             CircularProgressIndicator()
         } else {
-            Base(uiState.usuario) {
-                viewModel.cerrarSesion()
-                controller.navigate("tareas")
+            Surface(modifier = modifier) {
+                Base(uiState.usuario) {
+                    viewModel.cerrarSesion()
+                    closeAction()
+                }
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
 private fun Base(usuario: Usuario, closeSession: () -> Unit) {
-    Scaffold(
-    ) { paddingValues ->
-        UsuarioCard(
-            modifier = Modifier.padding(paddingValues),
-            usuario = usuario,
-            cerrarSesion = closeSession
-        )
-    }
+    UsuarioCard(
+        usuario = usuario,
+        cerrarSesion = closeSession
+    )
 }
 
 @Composable

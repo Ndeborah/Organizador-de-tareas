@@ -1,5 +1,7 @@
 package ar.edu.unlam.organizador
 
+import android.content.Context
+import android.content.Intent.getIntent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -34,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -45,9 +48,11 @@ import ar.edu.unlam.organizador.data.entidades.getTareas
 import ar.edu.unlam.organizador.ui.componentes.AltaUsuarioForm
 import ar.edu.unlam.organizador.ui.componentes.Menu
 import ar.edu.unlam.organizador.ui.screens.ChatDeGrupos
+import ar.edu.unlam.organizador.ui.screens.CompartirGrupo
 import ar.edu.unlam.organizador.ui.screens.CrearGrupo
 import ar.edu.unlam.organizador.ui.screens.CrearTarea
 import ar.edu.unlam.organizador.ui.screens.ListaDeGrupos
+import ar.edu.unlam.organizador.ui.screens.UnirseAGrupo
 import ar.edu.unlam.organizador.ui.screens.UsuarioScreen
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.viewmodels.MainActivityViewModel
@@ -56,11 +61,16 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MainScreen()
+            MainScreen(
+                {
+                    val intent = intent
+                    finish()
+                    startActivity(intent)
+                }
+            )
         }
     }
 }
@@ -68,56 +78,69 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
+    closeAction: () -> Unit,
     mainViewModel: MainActivityViewModel = hiltViewModel()
 ) {
     val controller = rememberNavController()
-    val mainUiState by mainViewModel.uiState.collectAsState()
     val usuarioState by mainViewModel.usuarioState.collectAsState()
-
-
+    val usuarioFormState by mainViewModel.usuarioFormState.collectAsState()
     mainViewModel.getUsuarioLocal()
     OrganizadorTheme {
-        if (mainUiState.loading) {
+        if (usuarioState.loading) {
             CircularProgressIndicator()
         } else {
             if (usuarioState.exists) {
-                mainViewModel.traerTodo()
                 Scaffold(
-                    topBar = { Menu("tareas", controller = controller) }
-                ) { test ->
+                    topBar = { Menu(controller = controller) }
+                ) { paddingValues ->
                     NavHost(navController = controller, startDestination = "tareas") {
                         composable(
                             "chats"
                         ) {
-                            ChatDeGrupos(modifier = Modifier.padding(test))
+                            ChatDeGrupos(modifier = Modifier.padding(paddingValues))
                         }
                         composable("grupos") {
-                            ListaDeGrupos(controller = controller)
+                            ListaDeGrupos(
+                                controller = controller,
+                                modifier = Modifier.padding(paddingValues)
+                            )
                         }
                         composable("tareas") {
-                            ListaTareas(controller, modifier = Modifier.padding(test))
+                            ListaTareas(controller, modifier = Modifier.padding(paddingValues))
                         }
                         composable("tareas/create/{id}") { navBackStackEntry ->
-                            CrearTarea(navBackStackEntry.arguments?.getString("id")!!)
+                            CrearTarea(controller, navBackStackEntry.arguments?.getString("id")!!)
                         }
                         composable("grupos/create") {
                             CrearGrupo()
                         }
                         composable("usuario") {
-                            UsuarioScreen()
+                            UsuarioScreen(
+                                closeAction = closeAction,
+                                modifier = Modifier.padding(paddingValues)
+                            )
+                        }
+                        composable("grupos/join") {
+                            UnirseAGrupo(controller, modifier = Modifier.padding(paddingValues))
+                        }
+                        composable("grupos/share/{id}") { navBackStackEntry ->
+                            CompartirGrupo(
+                                navBackStackEntry.arguments?.getString("id")!!,
+                                modifier = Modifier.padding(paddingValues)
+                            )
                         }
                     }
                 }
             } else {
                 AltaUsuarioForm(
-                    nombre = mainUiState.currentName,
+                    nombre = usuarioFormState.currentName,
                     cambioDeValorNombre = mainViewModel::actualizarNombre,
-                    erroresNombre = mainUiState.currentNameErrors,
-                    numero = mainUiState.currentTelefono,
+                    erroresNombre = usuarioFormState.currentNameErrors,
+                    numero = usuarioFormState.currentTelefono,
                     cambioDeValorNumero = mainViewModel::actualizarTelefono,
-                    erroresNumero = mainUiState.currentTelefonoErrors,
+                    erroresNumero = usuarioFormState.currentTelefonoErrors,
                     accionAceptar = { mainViewModel.ingresarUsuario() },
-                    validData = mainUiState.validForm
+                    validData = usuarioFormState.validForm
                 )
             }
         }
@@ -130,23 +153,29 @@ fun ListaTareas(
     modifier: Modifier = Modifier,
     mainViewModel: MainActivityViewModel = hiltViewModel(),
 ) {
-    val mainUiState by mainViewModel.uiState.collectAsState()
-    Surface(modifier = modifier) {
-        Base(
-            mainUiState.grupos,
-            createAction = { id ->
-                controller.navigate("tareas/create/${id}")
-            },
-            deleteAction = { id ->
-                mainViewModel.borrarTareaById(id)
-            },
-            completeAction = { grupoId, taskId ->
-                // Le cambia a la tarea el estado de realizado por el opuesto
-                // Actualiza la tarea en el repositorio
-                // Llama a la acción de cambiar de estado del view model.
-                mainViewModel.switchStatusTarea(grupoId, taskId)
-            }
-        )
+    val uiState by mainViewModel.uiState.collectAsState()
+    val userState by mainViewModel.usuarioState.collectAsState()
+    mainViewModel.traerTodo()
+    if (uiState.loading || userState.loading) {
+        CircularProgressIndicator()
+    } else {
+        Surface(modifier = modifier) {
+            Base(
+                uiState.grupos,
+                createAction = { grupoId ->
+                    controller.navigate("tareas/create/${grupoId}")
+                },
+                deleteAction = { grupoId, id ->
+                    mainViewModel.borrarTareaById(grupoId, id)
+                },
+                completeAction = { grupoId, taskId ->
+                    // Le cambia a la tarea el estado de realizado por el opuesto
+                    // Actualiza la tarea en el repositorio
+                    // Llama a la acción de cambiar de estado del view model.
+                    mainViewModel.switchStatusTarea(grupoId, taskId)
+                }
+            )
+        }
     }
 }
 
@@ -154,7 +183,7 @@ fun ListaTareas(
 private fun Base(
     grupos: List<Grupo>,
     createAction: (String) -> Unit,
-    deleteAction: (String) -> Unit,
+    deleteAction: (String, String) -> Unit,
     completeAction: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -172,7 +201,7 @@ private fun Base(
 private fun ListaTareasPorGrupo(
     grupos: List<Grupo>,
     createAction: (String) -> Unit,
-    deleteAction: (String) -> Unit,
+    deleteAction: (String, String) -> Unit,
     completeAction: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -188,7 +217,6 @@ private fun ListaTareasPorGrupo(
             )
 
         }
-        //
         items(grupos) { grupo ->
             val tareas = grupo.getTareas().filter { !it.realizada }.toMutableList()
             TareasDeGrupo(
@@ -261,7 +289,7 @@ private fun Separador(
 
 private fun TareaListItem(
     idGrupo: String,
-    item: Tarea, deleteAction: (String) -> Unit, taskAction: (String, String) -> Unit
+    item: Tarea, deleteAction: (String, String) -> Unit, taskAction: (String, String) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -275,7 +303,7 @@ private fun TareaListItem(
                 horizontalArrangement = Arrangement.End
             ) {
                 IconButton(
-                    onClick = { deleteAction(item.id) },
+                    onClick = { deleteAction(idGrupo, item.id) },
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Delete, contentDescription = "Borrar Tarea"
@@ -297,7 +325,7 @@ fun TareasDeGrupo(
     grupo: Grupo,
     tareas: MutableList<Tarea>,
     createAction: (String) -> Unit,
-    deleteAction: (String) -> Unit,
+    deleteAction: (String, String) -> Unit,
     completeAction: (String, String) -> Unit
 ) {
     Column {

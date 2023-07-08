@@ -29,6 +29,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import ar.edu.unlam.organizador.data.entidades.Tarea
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.theme.Purple40
@@ -38,25 +39,38 @@ import ar.edu.unlam.organizador.ui.viewmodels.CrearTareaViewModel
 var nombreTarea: String = ""
 
 @Composable
-fun CrearTarea(idGrupo: String, viewModel: CrearTareaViewModel = hiltViewModel()) {
+fun CrearTarea(
+    controller: NavHostController,
+    idGrupo: String,
+    viewModel: CrearTareaViewModel = hiltViewModel()
+) {
     OrganizadorTheme {
-
-        Base(crearAction = { nombreTarea ->
-            viewModel.save(idGrupo, Tarea(nombre = nombreTarea))
-        })
+        Base(
+            crearAccion = { nombreTarea ->
+                viewModel.save(idGrupo, Tarea(nombre = nombreTarea))
+                controller.navigate("tareas")
+            },
+            cancelar = {
+                controller.navigate("tareas")
+            }
+        )
     }
 }
 
 
 @Composable
-private fun Base(crearAction: (String) -> Unit, modifier: Modifier = Modifier) {
+private fun Base(
+    crearAccion: (String) -> Unit,
+    cancelar: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Card(modifier = modifier) {
-        CrearTareaCard(crearAction)
+        CrearTareaCard(crearAccion, cancelar)
     }
 }
 
 @Composable
-private fun CrearTareaCard(crearAction: (String) -> Unit) {
+private fun CrearTareaCard(crearAction: (String) -> Unit, cancelar: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -91,9 +105,11 @@ private fun CrearTareaCard(crearAction: (String) -> Unit) {
         }) {
             Text(text = "Crear")
         }
-        Button(modifier = Modifier.width(170.dp),
+        Button(
+            modifier = Modifier.width(170.dp),
             shape = RoundedCornerShape(10),
-            onClick = { }) {
+            onClick = cancelar
+        ) {
             Text(text = "Cancelar")
         }
     }

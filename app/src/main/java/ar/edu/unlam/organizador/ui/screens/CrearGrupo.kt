@@ -120,4 +120,3 @@ private fun IngresarNombre() {
     )
     nombreDeGrupo = text.text
 }
-

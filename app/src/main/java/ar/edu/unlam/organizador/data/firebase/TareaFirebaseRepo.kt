@@ -31,8 +31,10 @@ class TareaFirebaseRepo @Inject constructor() : TareaRepositorio {
             .child(tarea.id).setValue(tarea)
     }
 
-    override fun deleteByID(taskId: String) {
-        db.child(tareaReference).child(taskId).removeValue()
+    override fun deleteByID(grupoId: String, taskId: String) {
+        db.child(grupoReference)
+            .child(grupoId)
+            .child(tareaReference).child(taskId).removeValue()
     }
 
     // Esta función expone la base de datos a través del event listener

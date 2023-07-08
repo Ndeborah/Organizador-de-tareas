@@ -13,9 +13,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -29,17 +31,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.organizador.data.entidades.Grupo
 import ar.edu.unlam.organizador.data.entidades.getTareas
 import ar.edu.unlam.organizador.ui.theme.OrganizadorTheme
 import ar.edu.unlam.organizador.ui.viewmodels.ListaDeGruposViewModel
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListaDeGrupos(
-    viewModel: ListaDeGruposViewModel = hiltViewModel(), controller: NavController
+    controller: NavHostController,
+    modifier: Modifier = Modifier,
+    viewModel: ListaDeGruposViewModel = hiltViewModel()
 ) {
     viewModel.setUp()
     val uiState = viewModel.uiState.collectAsState()
@@ -53,28 +57,32 @@ fun ListaDeGrupos(
                 CircularProgressIndicator()
             } else {
                 Body(
+                    controller = controller,
                     grupos = uiState.value.grupos,
-                    modifier = Modifier.padding(it)
+                    modifier = modifier.padding(it)
                 )
             }
         }
-
     }
 }
 
 @Composable
 private fun Body(
+    controller: NavHostController,
     grupos: MutableCollection<Grupo>,
     modifier: Modifier = Modifier
 ) {
     // A surface container using the 'background' color from the theme
     Column(modifier = modifier) {
-        MostrarGrupos(grupos)
+        MostrarGrupos(controller, grupos)
     }
 }
 
 @Composable
-private fun MostrarGrupos(grupos: MutableCollection<Grupo>) {
+private fun MostrarGrupos(
+    controller: NavHostController,
+    grupos: MutableCollection<Grupo>
+) {
     LazyColumn(
         contentPadding = PaddingValues(10.dp),
         verticalArrangement = Arrangement.spacedBy(5.dp)
@@ -84,13 +92,20 @@ private fun MostrarGrupos(grupos: MutableCollection<Grupo>) {
                 grupo,
                 grupo.getTareas().filter { !it.realizada }.size,
                 grupo.getTareas().filter { it.realizada }.size
-            )
+            ) {
+                controller.navigate("grupos/share/${it}")
+            }
         }
     }
 }
 
 @Composable
-private fun FilaDeGrupo(grupo: Grupo, totalPendientes: Int, totalRealizadas: Int) {
+private fun FilaDeGrupo(
+    grupo: Grupo,
+    totalPendientes: Int,
+    totalRealizadas: Int,
+    shareAction: (String) -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -106,6 +121,11 @@ private fun FilaDeGrupo(grupo: Grupo, totalPendientes: Int, totalRealizadas: Int
             Text(
                 text = "Realizadas: $totalRealizadas"
             )
+            IconButton(onClick = { shareAction(grupo.id) }) {
+                Icon(
+                    imageVector = Icons.Filled.Share, contentDescription = "Crear Tarea"
+                )
+            }
         }
     }
 }
@@ -130,7 +150,7 @@ private fun Botones(navController: NavController) {
             },
             selected = false,
             onClick = {
-                navController.navigate("profile/user1234")
+                navController.navigate("grupos/create")
             },
             label = {
                 Text(
@@ -143,13 +163,13 @@ private fun Botones(navController: NavController) {
             icon = {
                 Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = "Borrar Tarea",
+                    contentDescription = "Unirse a un grupo",
                     tint = MaterialTheme.colorScheme.primary
                 )
             },
             selected = false,
             onClick = {
-                navController.navigate("grupos")
+                navController.navigate("grupos/join")
             },
             label = {
                 Text(

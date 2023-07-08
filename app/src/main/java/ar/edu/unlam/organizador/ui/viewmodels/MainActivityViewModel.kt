@@ -1,6 +1,5 @@
 package ar.edu.unlam.organizador.ui.viewmodels
 
-import android.content.Context
 import android.telephony.PhoneNumberUtils.isGlobalPhoneNumber
 import androidx.lifecycle.ViewModel
 import ar.edu.unlam.organizador.data.entidades.Grupo
@@ -20,20 +19,24 @@ import java.lang.Exception
 import javax.inject.Inject
 
 data class MainUiState(
-    val currentName: String = "",
-    val currentNameErrors: MutableList<String> = mutableListOf(),
-    val currentTelefono: String = "",
-    val currentTelefonoErrors: MutableList<String> = mutableListOf(),
-    val grupos: List<Grupo> = mutableListOf(),
-    val validForm: Boolean = false,
+    val grupos: MutableList<Grupo> = mutableListOf(),
     val loading: Boolean = true
 )
 
 data class UsuarioState(
     val usuario: Usuario = Usuario("", ""),
+    val loading: Boolean = false,
     val error: String = "",
     val hasError: Boolean = false,
     val exists: Boolean = false
+)
+
+data class UsuarioFormState(
+    val currentName: String = "",
+    val currentNameErrors: MutableList<String> = mutableListOf(),
+    val currentTelefono: String = "",
+    val currentTelefonoErrors: MutableList<String> = mutableListOf(),
+    val validForm: Boolean = false
 )
 
 @HiltViewModel
@@ -50,15 +53,23 @@ class MainActivityViewModel @Inject constructor(
     private var _usuarioState = MutableStateFlow(UsuarioState())
     val usuarioState = _usuarioState.asStateFlow()
 
+    private var _usuarioFormState = MutableStateFlow(UsuarioFormState())
+    val usuarioFormState = _usuarioFormState.asStateFlow()
+
     fun traerTodo() {
         startLoading()
-        traerGrupos()
+        val idUsuarioLocal = usuarioLocalRepositorio.getIdUsuario() ?: return
+        usuarioRemotoRepositorio.getUsuarioByID(
+            idUsuarioLocal,
+            onSucess = { traerGrupos(usuario = it) },
+            onFailure = { }
+        )
         finishLoading()
     }
 
-    fun traerGrupos() {
+    fun traerGrupos(usuario: Usuario) {
         val idGrupos = mutableListOf<String>()
-        _usuarioState.value.usuario.grupos.forEach {
+        usuario.grupos.forEach {
             idGrupos.add(it.value.id)
         }
         val listener = object : ValueEventListener {
@@ -79,32 +90,29 @@ class MainActivityViewModel @Inject constructor(
 
     fun getUsuarioLocal() {
         val idUsuarioLocal = usuarioLocalRepositorio.getIdUsuario() ?: return
-        startLoading()
-        usuarioRemotoRepositorio.getUsuarioByID(idUsuarioLocal,
-            onSucess = {
-                _usuarioState.value = _usuarioState.value.copy(
-                    usuario = it,
-                    exists = true
-                )
-                finishLoading()
-            },
-            onFailure = {
-                finishLoading()
-            }
+        _usuarioState.value = _usuarioState.value.copy(
+            loading = true
         )
+        usuarioRemotoRepositorio.getUsuarioByID(idUsuarioLocal, onSucess = {
+            _usuarioState.value = _usuarioState.value.copy(
+                usuario = it,
+                exists = true,
+                loading = false
+            )
+        }, onFailure = {
+            _usuarioState.value = _usuarioState.value.copy(
+                loading = false
+            )
+        })
     }
 
     fun validarFormulario() {
-        if (this._uiState.value.currentNameErrors.size == 0
-            && this._uiState.value.currentTelefonoErrors.size == 0
-            && this._uiState.value.currentName != ""
-            && this._uiState.value.currentTelefono != ""
-        ) {
-            _uiState.value = this._uiState.value.copy(
+        if (this._usuarioFormState.value.currentNameErrors.size == 0 && this._usuarioFormState.value.currentTelefonoErrors.size == 0 && this._usuarioFormState.value.currentName != "" && this._usuarioFormState.value.currentTelefono != "") {
+            _usuarioFormState.value = this._usuarioFormState.value.copy(
                 validForm = true
             )
         } else {
-            _uiState.value = this._uiState.value.copy(
+            _usuarioFormState.value = this._usuarioFormState.value.copy(
                 validForm = false
             )
         }
@@ -115,15 +123,14 @@ class MainActivityViewModel @Inject constructor(
         if (nombre.length < 4) {
             errors.add("Ingrese al menos cuatro caracteres 😳.")
         }
-        _uiState.value = _uiState.value.copy(
-            currentName = nombre,
-            currentNameErrors = errors
+        _usuarioFormState.value = _usuarioFormState.value.copy(
+            currentName = nombre, currentNameErrors = errors
         )
         validarFormulario()
     }
 
-    fun borrarTareaById(idTarea: String) {
-        tareaRepositorio.deleteByID(idTarea)
+    fun borrarTareaById(grupoId: String, idTarea: String) {
+        tareaRepositorio.deleteByID(grupoId, idTarea)
     }
 
     fun actualizarTelefono(telefono: String) {
@@ -131,18 +138,15 @@ class MainActivityViewModel @Inject constructor(
         if (!isGlobalPhoneNumber(telefono)) {
             errors.add("Debe ser un número de teléfono válido 😳.")
         }
-        _uiState.value = _uiState.value.copy(
-            currentTelefono = telefono,
-            currentTelefonoErrors = errors
+        _usuarioFormState.value = _usuarioFormState.value.copy(
+            currentTelefono = telefono, currentTelefonoErrors = errors
         )
         validarFormulario()
     }
 
     private fun storeUserLocally(usuario: Usuario) {
         _usuarioState.value = _usuarioState.value.copy(
-            exists = true,
-            usuario = usuario,
-            error = ""
+            exists = true, usuario = usuario, error = ""
         )
     }
 
@@ -154,18 +158,17 @@ class MainActivityViewModel @Inject constructor(
         }
 
         _usuarioState.value = _usuarioState.value.copy(
-            error = errorMessage,
-            hasError = true
+            error = errorMessage, hasError = true
         )
     }
 
     fun ingresarUsuario() {
         usuarioRemotoRepositorio.getOrCreate(
-            Usuario(_uiState.value.currentName, _uiState.value.currentTelefono),
+            Usuario(_usuarioFormState.value.currentName, _usuarioFormState.value.currentTelefono),
             this::storeUserLocally,
             this::onUserGetError
         )
-        usuarioLocalRepositorio.setIdUsuario(_uiState.value.currentTelefono)
+        usuarioLocalRepositorio.setIdUsuario(_usuarioFormState.value.currentTelefono)
     }
 
     // Se trae la tarea del repositorio usando el id de la tarea.

@@ -6,14 +6,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -59,7 +63,10 @@ fun ListaDeGrupos(
                 Body(
                     controller = controller,
                     grupos = uiState.value.grupos,
-                    modifier = modifier.padding(it)
+                    modifier = modifier.padding(it),
+                    deleteAction = { idGrupo ->
+                        viewModel.deleteGroup(idGrupo)
+                    }
                 )
             }
         }
@@ -70,18 +77,20 @@ fun ListaDeGrupos(
 private fun Body(
     controller: NavHostController,
     grupos: MutableCollection<Grupo>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    deleteAction: (String) -> Unit
 ) {
     // A surface container using the 'background' color from the theme
     Column(modifier = modifier) {
-        MostrarGrupos(controller, grupos)
+        MostrarGrupos(controller, grupos, deleteAction = deleteAction)
     }
 }
 
 @Composable
 private fun MostrarGrupos(
     controller: NavHostController,
-    grupos: MutableCollection<Grupo>
+    grupos: MutableCollection<Grupo>,
+    deleteAction: (String) -> Unit
 ) {
     LazyColumn(
         contentPadding = PaddingValues(10.dp),
@@ -91,9 +100,17 @@ private fun MostrarGrupos(
             FilaDeGrupo(
                 grupo,
                 grupo.getTareas().filter { !it.realizada }.size,
-                grupo.getTareas().filter { it.realizada }.size
+                grupo.getTareas().filter { it.realizada }.size,
+                shareAction = { controller.navigate("grupos/share/${it}") },
+                deleteAction = deleteAction
+            )
+        }
+        item {
+            Button(
+                onClick = { throw RuntimeException("Test Crash") },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
             ) {
-                controller.navigate("grupos/share/${it}")
+                Text(text = "DANGER")
             }
         }
     }
@@ -104,7 +121,8 @@ private fun FilaDeGrupo(
     grupo: Grupo,
     totalPendientes: Int,
     totalRealizadas: Int,
-    shareAction: (String) -> Unit
+    shareAction: (String) -> Unit,
+    deleteAction: (String) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -121,11 +139,20 @@ private fun FilaDeGrupo(
             Text(
                 text = "Realizadas: $totalRealizadas"
             )
-            IconButton(onClick = { shareAction(grupo.id) }) {
-                Icon(
-                    imageVector = Icons.Filled.Share, contentDescription = "Crear Tarea"
-                )
+            //los parentesis del row sirven para pasarle parametros opcionales
+            Row() {
+                IconButton(onClick = { shareAction(grupo.id) }) {
+                    Icon(
+                        imageVector = Icons.Filled.Share, contentDescription = "Unirse a un grupo"
+                    )
+                }
+                IconButton(onClick = { deleteAction(grupo.id) }) {
+                    Icon(
+                        imageVector = Icons.Filled.Delete, contentDescription = "Borrar grupo"
+                    )
+                }
             }
+
         }
     }
 }
@@ -144,7 +171,7 @@ private fun Botones(navController: NavController) {
             icon = {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Borrar Tarea",
+                    contentDescription = "Unirse a un grupo",
                     tint = MaterialTheme.colorScheme.primary
                 )
             },
@@ -181,7 +208,5 @@ private fun Botones(navController: NavController) {
     }
     //BOTÓN PRUEBA CRASHLYTICS
 
-    /*Button(onClick = {throw RuntimeException("Test Crash")}) {
-        Text(text = "Prueba")
-    }*/
+
 }

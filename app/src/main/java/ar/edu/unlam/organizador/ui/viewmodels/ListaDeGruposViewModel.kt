@@ -1,12 +1,11 @@
 package ar.edu.unlam.organizador.ui.viewmodels
 
-import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import ar.edu.unlam.organizador.data.entidades.Grupo
 import ar.edu.unlam.organizador.data.entidades.Tarea
 import ar.edu.unlam.organizador.data.entidades.Usuario
 import ar.edu.unlam.organizador.data.repositorios.GrupoRepositorio
-import ar.edu.unlam.organizador.data.repositorios.TareaRepositorio
 import ar.edu.unlam.organizador.data.repositorios.UsuarioLocalRepositorio
 import ar.edu.unlam.organizador.data.repositorios.UsuarioRepositorio
 import com.google.firebase.database.DataSnapshot
@@ -30,18 +29,24 @@ class ListaDeGruposViewModel @Inject constructor(
     private val grupoRepositorio: GrupoRepositorio,
     private val usuarioLocalRepositorio: UsuarioLocalRepositorio,
     private val usuarioRepositorio: UsuarioRepositorio
-
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ListaDeGruposUIState())
     val uiState = _uiState.asStateFlow()
 
+    fun deleteGroup(idGrupo: String) {
+        usuarioRepositorio.quitarGrupo(usuarioLocalRepositorio.getIdUsuario()!!, idGrupo) {
+            Log.i("LISTAGRUPOVIEWMODEL", "No se pudo borrar el grupo x.x.x.x.x")
+        }
+        updateGrupos()
+    }
+
     fun setUp() {
         startLoading()
-        getUsuarioLocal()
+        updateGrupos()
         finishLoading()
     }
 
-    fun getUsuarioLocal() {
+    fun updateGrupos() {
         val idUsuarioLocal = usuarioLocalRepositorio.getIdUsuario() ?: return
         usuarioRepositorio.getUsuarioByID(idUsuarioLocal,
             onSucess = {

@@ -11,12 +11,12 @@ import javax.inject.Inject
 class UsuarioFirebaseRepo @Inject constructor() : UsuarioRepositorio {
 
     private val db = Firebase.database.reference
-    private val firebaseReference = "usuario"
+    private val userReference = "usuario"
 
     val usuarios = mutableListOf<Usuario>()
 
     override fun getUsuarioByID(id: String, onSucess: (Usuario) -> Unit, onFailure: () -> Unit) {
-        db.child(firebaseReference).child(id).get().addOnSuccessListener {
+        db.child(userReference).child(id).get().addOnSuccessListener {
             it.getValue(Usuario::class.java).let { usuario ->
                 if (usuario != null && usuario.nickname !== "") {
                     onSucess(usuario)
@@ -27,8 +27,12 @@ class UsuarioFirebaseRepo @Inject constructor() : UsuarioRepositorio {
         }
     }
 
-    override fun getOrCreate(usuario: Usuario, onSucess: (Usuario) -> Unit, onError: (Exception) -> Unit) {
-        db.child(firebaseReference).child(usuario.numeroTelefono).get()
+    override fun getOrCreate(
+        usuario: Usuario,
+        onSucess: (Usuario) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        db.child(userReference).child(usuario.numeroTelefono).get()
             .addOnSuccessListener { item ->
                 item.getValue(Usuario::class.java).let {
                     if (it != null) {
@@ -45,14 +49,25 @@ class UsuarioFirebaseRepo @Inject constructor() : UsuarioRepositorio {
     }
 
     override fun agregar(usuario: Usuario) {
-        db.child(firebaseReference).child(usuario.numeroTelefono).setValue(usuario)
+        db.child(userReference).child(usuario.numeroTelefono).setValue(usuario)
+    }
+
+    override fun quitarGrupo(idUsuario: String, idGrupo: String, onFailure: () -> Unit) {
+        db.child(userReference)
+            .child(idUsuario)
+            .child("grupos")
+            .child(idGrupo)
+            .removeValue()
+            .addOnFailureListener {
+                onFailure()
+            }
     }
 
     override fun agregarGrupo(idUsuario: String, grupo: Grupo, onFailure: () -> Unit) {
-        db.child(firebaseReference)
+        db.child(userReference)
             .child(idUsuario)
             .child("grupos")
-            .push()
+            .child(grupo.id)
             .setValue(grupo)
             .addOnFailureListener {
                 onFailure()
@@ -61,7 +76,7 @@ class UsuarioFirebaseRepo @Inject constructor() : UsuarioRepositorio {
 
 
     override fun listenDb(listener: ValueEventListener) {
-        db.child(firebaseReference).addValueEventListener(listener)
+        db.child(userReference).addValueEventListener(listener)
     }
 
 }

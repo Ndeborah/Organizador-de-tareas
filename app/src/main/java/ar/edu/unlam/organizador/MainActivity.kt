@@ -110,7 +110,7 @@ fun MainScreen(
                             CrearTarea(controller, navBackStackEntry.arguments?.getString("id")!!)
                         }
                         composable("grupos/create") {
-                            CrearGrupo()
+                            CrearGrupo(controller)
                         }
                         composable("usuario") {
                             UsuarioScreen(
